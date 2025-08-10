@@ -9,7 +9,7 @@ interface DeleteMultipleModalProps {
   onConfirm: (productIds: string[]) => void;
 }
 
-export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
+const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
   products,
   isOpen,
   onClose,
@@ -24,9 +24,9 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("id-ID", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "IDR",
+      currency: "USD",
     }).format(price);
   };
 
@@ -75,10 +75,10 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
                     </div>
                     <div className="ml-3">
                       <h2 className="text-lg font-semibold text-red-900">
-                        Hapus Multiple Produk
+                        Delete Multiple Products
                       </h2>
                       <p className="text-sm text-red-600">
-                        Konfirmasi penghapusan {products.length} produk
+                        Confirm deletion of {products.length} products
                       </p>
                     </div>
                   </div>
@@ -121,46 +121,46 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
                       />
                     </svg>
                     <h3 className="mt-4 text-lg font-medium text-gray-900">
-                      Konfirmasi Penghapusan Multiple Produk
+                      Confirm Deletion of Multiple Products
                     </h3>
                     <p className="mt-2 text-sm text-gray-600">
-                      Anda yakin ingin menghapus {products.length} produk ini?
-                      Tindakan ini tidak dapat dibatalkan.
+                      Are you sure you want to delete these {products.length}{" "}
+                      products? This action cannot be undone.
                     </p>
                   </div>
 
                   {/* Summary Information */}
                   <div className="bg-gray-50 rounded-lg p-4 mb-6">
                     <h4 className="text-sm font-medium text-gray-900 mb-3">
-                      Ringkasan Produk yang Akan Dihapus
+                      Summary of Products to be Deleted
                     </h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-600">Total Produk:</span>
+                        <span className="text-gray-600">Total Products:</span>
                         <p className="font-medium text-gray-900">
                           {products.length}
                         </p>
                       </div>
                       <div>
-                        <span className="text-gray-600">Total Nilai:</span>
+                        <span className="text-gray-600">Total Value:</span>
                         <p className="font-medium text-green-600">
                           {formatPrice(getTotalValue())}
                         </p>
                       </div>
                       <div>
-                        <span className="text-gray-600">Kategori:</span>
+                        <span className="text-gray-600">Categories:</span>
                         <p className="font-medium text-gray-900">
                           {getCategories()}
                         </p>
                       </div>
                       <div>
-                        <span className="text-gray-600">Total Stok:</span>
+                        <span className="text-gray-600">Total Stock:</span>
                         <p className="font-medium text-blue-600">
                           {products.reduce(
                             (total, product) => total + product.stock,
                             0
                           )}{" "}
-                          unit
+                          units
                         </p>
                       </div>
                     </div>
@@ -169,7 +169,7 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
                   {/* Products List */}
                   <div className="mb-6">
                     <h4 className="text-sm font-medium text-gray-900 mb-3">
-                      Daftar Produk ({products.length})
+                      Product List ({products.length})
                     </h4>
                     <div className="max-h-64 overflow-y-auto space-y-2">
                       {products.map((product) => (
@@ -184,6 +184,7 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
                                 src={product.imagesUrl[0]}
                                 alt={product.name}
                                 className="w-10 h-10 object-cover rounded border border-gray-200"
+                                loading="lazy"
                                 onError={(e) => {
                                   e.currentTarget.src = placeholderImage;
                                 }}
@@ -215,16 +216,16 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
                             </p>
                             <div className="flex items-center space-x-2 mt-1">
                               <span className="text-xs text-gray-600">
-                                Stok: {product.stock}
+                                Stock: {product.stock}
                               </span>
                               <span className="text-xs text-gray-600">
-                                Harga: {formatPrice(product.price)}
+                                Price: {formatPrice(product.price)}
                               </span>
                             </div>
                           </div>
                           <div className="flex-shrink-0">
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                              Akan Dihapus
+                              Will be deleted
                             </span>
                           </div>
                         </div>
@@ -233,7 +234,7 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
                   </div>
 
                   {/* Warning */}
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  {/* <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex">
                       <div className="flex-shrink-0">
                         <svg
@@ -252,46 +253,38 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
                       </div>
                       <div className="ml-3">
                         <h4 className="text-sm font-medium text-yellow-900">
-                          Peringatan Penting
+                          Important Warning
                         </h4>
                         <ul className="mt-2 text-sm text-yellow-700 list-disc list-inside space-y-1">
                           <li>
-                            Semua {products.length} produk akan dihapus secara
-                            permanen
+                            All {products.length} products will be permanently
+                            deleted
                           </li>
                           <li>
-                            Total nilai {formatPrice(getTotalValue())} akan
-                            hilang
+                            Total value {formatPrice(getTotalValue())} will be
+                            lost
                           </li>
                           <li>
-                            Semua data produk termasuk gambar, varian, dan tag
-                            akan hilang
+                            All product data including images, variants, and
+                            tags will be removed
                           </li>
-                          <li>
-                            Tindakan ini tidak dapat dibatalkan atau
-                            dikembalikan
-                          </li>
+                          <li>This action cannot be undone or reverted</li>
                         </ul>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
               {/* Footer */}
               <div className="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
                 <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={onClose}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                  >
-                    Batal
+                  <button onClick={onClose} className="btn btn-secondary">
+                    Cancel
                   </button>
-                  <button
-                    onClick={handleConfirm}
-                    className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                  >
-                    Hapus {products.length} Produk
+                  <button onClick={handleConfirm} className="btn btn-danger">
+                    Delete {products.length} Product
+                    {products.length > 1 ? "s" : ""}
                   </button>
                 </div>
               </div>
@@ -302,3 +295,5 @@ export const DeleteMultipleModal: React.FC<DeleteMultipleModalProps> = ({
     </div>
   );
 };
+
+export default DeleteMultipleModalComponent;

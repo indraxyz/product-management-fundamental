@@ -1,3 +1,4 @@
+@config "../../tailwind.config.js";
 @import "tailwindcss";
 
 /* Custom styles */
@@ -8,6 +9,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode base colors */
+html.dark body {
+  background-color: #0b1220;
 }
 
 code {
@@ -35,9 +41,15 @@ code {
   background: #a8a8a8;
 }
 
-/* Smooth transitions */
-* {
-  transition: all 0.2s ease-in-out;
+/* Prefer-reduced-motion and scoped transitions to avoid layout thrash */
+@media (prefers-reduced-motion: no-preference) {
+  button,
+  a,
+  .icon-btn,
+  .btn {
+    transition: color 0.15s ease, background-color 0.15s ease,
+      border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
 }
 
 /* Focus styles */
@@ -73,4 +85,56 @@ code {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Component primitives for consistent UI */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
+  }
+  .btn-primary {
+    @apply text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 border border-transparent dark:bg-blue-500 dark:hover:bg-blue-600;
+  }
+  .btn-secondary {
+    @apply text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 focus:ring-blue-500 dark:text-gray-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700;
+  }
+  .btn-danger {
+    @apply text-white bg-red-600 hover:bg-red-700 focus:ring-red-500 border border-transparent dark:bg-red-500 dark:hover:bg-red-600;
+  }
+  .icon-btn {
+    @apply p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-300 dark:hover:text-white dark:hover:bg-slate-700;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-200;
+  }
+  .select {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-blue {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200;
+  }
+  .badge-green {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200;
+  }
+  .badge-yellow {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200;
+  }
+  .badge-red {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-slate-900 dark:border-slate-800;
+  }
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200 bg-gray-50 dark:bg-slate-900 dark:border-slate-800;
+  }
+  .card-body {
+    @apply p-6;
+  }
 }

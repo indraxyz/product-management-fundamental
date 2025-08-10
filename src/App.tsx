@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { Suspense, useState, lazy } from "react";
 import { useProductManager } from "./hooks/useProductManager";
 import { ProductTable } from "./components/ProductTable";
 import { ProductFilters } from "./components/ProductFilters";
 import { LoadMoreButton } from "./components/LoadMoreButton";
-import { ProductDetail } from "./components/ProductDetail";
-import { ProductForm } from "./components/ProductForm";
-import { DeleteModal } from "./components/DeleteModal";
-import { DeleteMultipleModal } from "./components/DeleteMultipleModal";
+import { ThemeToggle } from "./components/ThemeToggle";
 import type { Product } from "./types/Product";
+
+const ProductDetail = lazy(() => import("./components/ProductDetail"));
+const ProductForm = lazy(() => import("./components/ProductForm"));
+const DeleteModal = lazy(() => import("./components/DeleteModal"));
+const DeleteMultipleModal = lazy(
+  () => import("./components/DeleteMultipleModal")
+);
 
 function App() {
   const {
@@ -107,26 +111,27 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white/80 backdrop-blur border-b border-gray-200 dark:bg-slate-900/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Manajemen Produk
+                Product Management
               </h1>
               <p className="mt-1 text-sm text-gray-500">
-                Kelola produk Anda dengan mudah dan efisien
+                Manage your products easily and efficiently
               </p>
             </div>
             <div className="flex items-center space-x-4">
+              <ThemeToggle />
               <div className="text-sm text-gray-500">
                 Total:{" "}
                 <span className="font-medium text-gray-900">
                   {totalProducts}
                 </span>{" "}
-                produk
+                products
               </div>
             </div>
           </div>
@@ -164,38 +169,54 @@ function App() {
       </div>
 
       {/* Product Detail Drawer */}
-      <ProductDetail
-        product={selectedProduct}
-        isOpen={isDetailOpen}
-        onClose={() => setIsDetailOpen(false)}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {isDetailOpen && selectedProduct && (
+        <Suspense fallback={null}>
+          <ProductDetail
+            product={selectedProduct}
+            isOpen={isDetailOpen}
+            onClose={() => setIsDetailOpen(false)}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </Suspense>
+      )}
 
       {/* Product Form Drawer */}
-      <ProductForm
-        product={editingProduct}
-        isOpen={isFormOpen}
-        onClose={handleCloseForm}
-        onSave={handleSaveProduct}
-        mode={formMode}
-      />
+      {isFormOpen && (
+        <Suspense fallback={null}>
+          <ProductForm
+            product={editingProduct}
+            isOpen={isFormOpen}
+            onClose={handleCloseForm}
+            onSave={handleSaveProduct}
+            mode={formMode}
+          />
+        </Suspense>
+      )}
 
       {/* Delete Single Product Modal */}
-      <DeleteModal
-        product={selectedProduct}
-        isOpen={isDeleteModalOpen}
-        onClose={handleCloseDeleteModal}
-        onConfirm={handleConfirmDelete}
-      />
+      {isDeleteModalOpen && selectedProduct && (
+        <Suspense fallback={null}>
+          <DeleteModal
+            product={selectedProduct}
+            isOpen={isDeleteModalOpen}
+            onClose={handleCloseDeleteModal}
+            onConfirm={handleConfirmDelete}
+          />
+        </Suspense>
+      )}
 
       {/* Delete Multiple Products Modal */}
-      <DeleteMultipleModal
-        products={selectedProductsData}
-        isOpen={isDeleteMultipleModalOpen}
-        onClose={handleCloseDeleteMultipleModal}
-        onConfirm={handleConfirmDeleteMultiple}
-      />
+      {isDeleteMultipleModalOpen && selectedProductsData.length > 0 && (
+        <Suspense fallback={null}>
+          <DeleteMultipleModal
+            products={selectedProductsData}
+            isOpen={isDeleteMultipleModalOpen}
+            onClose={handleCloseDeleteMultipleModal}
+            onConfirm={handleConfirmDeleteMultiple}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

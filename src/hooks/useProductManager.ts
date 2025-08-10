@@ -81,7 +81,7 @@ export const useProductManager = () => {
 
   const deleteSelectedProducts = useCallback(() => {
     if (selectedProducts.length === 0) {
-      toast.error("Tidak ada produk yang dipilih untuk dihapus");
+      toast.error("No products selected to delete");
       return;
     }
 
@@ -89,7 +89,7 @@ export const useProductManager = () => {
       prev.filter((product) => !selectedProducts.includes(product.id))
     );
     setSelectedProducts([]);
-    toast.success(`${selectedProducts.length} produk berhasil dihapus`);
+    toast.success(`${selectedProducts.length} products deleted successfully`);
   }, [selectedProducts]);
 
   const updateFilters = useCallback((newFilters: Partial<ProductFilters>) => {
@@ -112,7 +112,7 @@ export const useProductManager = () => {
   // CRUD Operations
   const addProduct = useCallback((newProduct: Product) => {
     setProducts((prev) => [newProduct, ...prev]);
-    toast.success("Produk berhasil ditambahkan");
+    toast.success("Product added successfully");
   }, []);
 
   const updateProduct = useCallback((updatedProduct: Product) => {
@@ -121,7 +121,7 @@ export const useProductManager = () => {
         product.id === updatedProduct.id ? updatedProduct : product
       )
     );
-    toast.success("Produk berhasil diperbarui");
+    toast.success("Product updated successfully");
   }, []);
 
   const deleteProduct = useCallback((productToDelete: Product) => {
@@ -131,12 +131,12 @@ export const useProductManager = () => {
     setSelectedProducts((prev) =>
       prev.filter((id) => id !== productToDelete.id)
     );
-    toast.success("Produk berhasil dihapus");
+    toast.success("Product deleted successfully");
   }, []);
 
   const deleteMultipleProducts = useCallback((productIds: string[]) => {
     if (productIds.length === 0) {
-      toast.error("Tidak ada produk yang dipilih untuk dihapus");
+      toast.error("No products selected to delete");
       return;
     }
 
@@ -146,7 +146,7 @@ export const useProductManager = () => {
     setSelectedProducts((prev) =>
       prev.filter((id) => !productIds.includes(id))
     );
-    toast.success(`${productIds.length} produk berhasil dihapus`);
+    toast.success(`${productIds.length} products deleted successfully`);
   }, []);
 
   return {

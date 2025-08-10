@@ -4,8 +4,8 @@ export const mockProducts: Product[] = [
   {
     id: "1",
     name: "iPhone 15 Pro Max",
-    description: "Smartphone terbaru dengan chip A17 Pro dan kamera 48MP",
-    price: 25000000,
+    description: "Latest smartphone with A17 Pro chip and 48MP camera",
+    price: 1299,
     stock: 50,
     discount: 5,
     tags: ["smartphone", "apple", "premium"],
@@ -16,7 +16,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400",
     ],
     weight: 221,
-    varian: [
+    variants: [
       {
         id: "1-1",
         name: "Storage",
@@ -28,7 +28,7 @@ export const mockProducts: Product[] = [
         id: "1-2",
         name: "Storage",
         value: "512GB",
-        priceModifier: 2000000,
+        priceModifier: 200,
         stockModifier: 0,
       },
     ],
@@ -36,8 +36,9 @@ export const mockProducts: Product[] = [
   {
     id: "2",
     name: "MacBook Air M2",
-    description: "Laptop ringan dengan performa tinggi dan baterai tahan lama",
-    price: 18000000,
+    description:
+      "Lightweight laptop with high performance and long battery life",
+    price: 1199,
     stock: 25,
     discount: 10,
     tags: ["laptop", "apple", "macbook"],
@@ -48,7 +49,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400",
     ],
     weight: 1247,
-    varian: [
+    variants: [
       {
         id: "2-1",
         name: "Storage",
@@ -60,7 +61,7 @@ export const mockProducts: Product[] = [
         id: "2-2",
         name: "Storage",
         value: "512GB",
-        priceModifier: 1500000,
+        priceModifier: 150,
         stockModifier: 0,
       },
     ],
@@ -68,9 +69,8 @@ export const mockProducts: Product[] = [
   {
     id: "3",
     name: "Nike Air Max 270",
-    description:
-      "Sepatu olahraga dengan teknologi Air Max untuk kenyamanan maksimal",
-    price: 2500000,
+    description: "Sports shoes with Air Max technology for maximum comfort",
+    price: 150,
     stock: 100,
     discount: 15,
     tags: ["sepatu", "olahraga", "nike"],
@@ -81,7 +81,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
     ],
     weight: 350,
-    varian: [
+    variants: [
       {
         id: "3-1",
         name: "Size",
@@ -101,8 +101,8 @@ export const mockProducts: Product[] = [
   {
     id: "4",
     name: "Samsung Galaxy S24 Ultra",
-    description: "Flagship Android dengan S Pen dan kamera 200MP",
-    price: 22000000,
+    description: "Android flagship with S Pen and 200MP camera",
+    price: 1199,
     stock: 30,
     discount: 8,
     tags: ["smartphone", "android", "samsung"],
@@ -113,7 +113,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400",
     ],
     weight: 232,
-    varian: [
+    variants: [
       {
         id: "4-1",
         name: "Storage",
@@ -125,7 +125,7 @@ export const mockProducts: Product[] = [
         id: "4-2",
         name: "Storage",
         value: "512GB",
-        priceModifier: 1800000,
+        priceModifier: 150,
         stockModifier: 0,
       },
     ],
@@ -133,8 +133,8 @@ export const mockProducts: Product[] = [
   {
     id: "5",
     name: "Adidas Ultraboost 22",
-    description: "Sepatu running dengan teknologi Boost untuk energi maksimal",
-    price: 3200000,
+    description: "Running shoes with Boost technology for maximum energy",
+    price: 160,
     stock: 75,
     discount: 20,
     tags: ["sepatu", "running", "adidas"],
@@ -145,7 +145,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400",
     ],
     weight: 310,
-    varian: [
+    variants: [
       {
         id: "5-1",
         name: "Size",
@@ -165,8 +165,8 @@ export const mockProducts: Product[] = [
   {
     id: "6",
     name: "Sony WH-1000XM5",
-    description: "Headphone wireless dengan noise cancelling terbaik",
-    price: 4500000,
+    description: "Wireless headphones with best-in-class noise cancelling",
+    price: 349,
     stock: 40,
     discount: 12,
     tags: ["headphone", "wireless", "sony"],
@@ -177,7 +177,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
     ],
     weight: 250,
-    varian: [
+    variants: [
       {
         id: "6-1",
         name: "Color",
@@ -197,8 +197,8 @@ export const mockProducts: Product[] = [
   {
     id: "7",
     name: "Levi's 501 Original Jeans",
-    description: "Celana jeans klasik dengan kualitas premium",
-    price: 1200000,
+    description: "Classic jeans with premium quality",
+    price: 98,
     stock: 200,
     discount: 25,
     tags: ["celana", "jeans", "levis"],
@@ -209,7 +209,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
     ],
     weight: 450,
-    varian: [
+    variants: [
       {
         id: "7-1",
         name: "Size",
@@ -229,8 +229,8 @@ export const mockProducts: Product[] = [
   {
     id: "8",
     name: "iPad Pro 12.9",
-    description: "Tablet profesional dengan chip M2 dan Liquid Retina XDR",
-    price: 15000000,
+    description: "Professional tablet with M2 chip and Liquid Retina XDR",
+    price: 1099,
     stock: 35,
     discount: 7,
     tags: ["tablet", "apple", "ipad"],
@@ -241,7 +241,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400",
     ],
     weight: 682,
-    varian: [
+    variants: [
       {
         id: "8-1",
         name: "Storage",
@@ -253,7 +253,7 @@ export const mockProducts: Product[] = [
         id: "8-2",
         name: "Storage",
         value: "256GB",
-        priceModifier: 2000000,
+        priceModifier: 150,
         stockModifier: 0,
       },
     ],
@@ -261,8 +261,8 @@ export const mockProducts: Product[] = [
   {
     id: "9",
     name: "Uniqlo Ultra Light Down Jacket",
-    description: "Jaket ringan dengan teknologi down untuk cuaca dingin",
-    price: 800000,
+    description: "Lightweight jacket with down technology for cold weather",
+    price: 80,
     stock: 150,
     discount: 30,
     tags: ["jaket", "outerwear", "uniqlo"],
@@ -273,7 +273,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400",
     ],
     weight: 280,
-    varian: [
+    variants: [
       {
         id: "9-1",
         name: "Size",
@@ -293,8 +293,8 @@ export const mockProducts: Product[] = [
   {
     id: "10",
     name: "Canon EOS R6 Mark II",
-    description: "Kamera mirrorless full-frame dengan performa profesional",
-    price: 35000000,
+    description: "Full-frame mirrorless camera with professional performance",
+    price: 2499,
     stock: 15,
     discount: 5,
     tags: ["kamera", "mirrorless", "canon"],
@@ -305,7 +305,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400",
     ],
     weight: 670,
-    varian: [
+    variants: [
       {
         id: "10-1",
         name: "Kit",
@@ -317,7 +317,7 @@ export const mockProducts: Product[] = [
         id: "10-2",
         name: "Kit",
         value: "With 24-105mm",
-        priceModifier: 8000000,
+        priceModifier: 800,
         stockModifier: 0,
       },
     ],
@@ -325,8 +325,8 @@ export const mockProducts: Product[] = [
   {
     id: "11",
     name: "Zara Oversized Blazer",
-    description: "Blazer oversized dengan potongan modern dan elegan",
-    price: 1500000,
+    description: "Oversized blazer with modern and elegant cut",
+    price: 120,
     stock: 80,
     discount: 18,
     tags: ["blazer", "formal", "zara"],
@@ -337,7 +337,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400",
     ],
     weight: 320,
-    varian: [
+    variants: [
       {
         id: "11-1",
         name: "Size",
@@ -357,8 +357,8 @@ export const mockProducts: Product[] = [
   {
     id: "12",
     name: "Apple Watch Series 9",
-    description: "Smartwatch dengan fitur kesehatan dan fitness terdepan",
-    price: 8500000,
+    description: "Smartwatch with leading health and fitness features",
+    price: 399,
     stock: 60,
     discount: 10,
     tags: ["smartwatch", "apple", "fitness"],
@@ -369,7 +369,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1434493789847-2f02dc6ca359?w=400",
     ],
     weight: 31,
-    varian: [
+    variants: [
       {
         id: "12-1",
         name: "Size",
@@ -381,7 +381,7 @@ export const mockProducts: Product[] = [
         id: "12-2",
         name: "Size",
         value: "45mm",
-        priceModifier: 500000,
+        priceModifier: 50,
         stockModifier: 0,
       },
     ],
@@ -389,8 +389,8 @@ export const mockProducts: Product[] = [
   {
     id: "13",
     name: "H&M Cotton T-Shirt",
-    description: "Kaos katun dengan potongan casual dan nyaman",
-    price: 250000,
+    description: "Cotton t-shirt with casual and comfortable fit",
+    price: 15,
     stock: 500,
     discount: 40,
     tags: ["kaos", "casual", "hm"],
@@ -401,7 +401,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
     ],
     weight: 150,
-    varian: [
+    variants: [
       {
         id: "13-1",
         name: "Size",
@@ -421,8 +421,8 @@ export const mockProducts: Product[] = [
   {
     id: "14",
     name: "DJI Mini 3 Pro",
-    description: "Drone ringan dengan kamera 4K dan obstacle avoidance",
-    price: 12000000,
+    description: "Lightweight drone with 4K camera and obstacle avoidance",
+    price: 759,
     stock: 25,
     discount: 8,
     tags: ["drone", "kamera", "dji"],
@@ -433,7 +433,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1579829366248-204fe8413f31?w=400",
     ],
     weight: 249,
-    varian: [
+    variants: [
       {
         id: "14-1",
         name: "Kit",
@@ -445,7 +445,7 @@ export const mockProducts: Product[] = [
         id: "14-2",
         name: "Kit",
         value: "Fly More",
-        priceModifier: 2000000,
+        priceModifier: 150,
         stockModifier: 0,
       },
     ],
@@ -453,8 +453,8 @@ export const mockProducts: Product[] = [
   {
     id: "15",
     name: "Converse Chuck Taylor All Star",
-    description: "Sepatu klasik dengan desain timeless dan nyaman",
-    price: 1200000,
+    description: "Classic shoes with timeless and comfortable design",
+    price: 65,
     stock: 200,
     discount: 20,
     tags: ["sepatu", "casual", "converse"],
@@ -465,7 +465,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=400",
     ],
     weight: 300,
-    varian: [
+    variants: [
       {
         id: "15-1",
         name: "Size",
@@ -485,8 +485,8 @@ export const mockProducts: Product[] = [
   {
     id: "16",
     name: "Sony PlayStation 5",
-    description: "Konsol game next-gen dengan grafis 4K dan ray tracing",
-    price: 8500000,
+    description: "Next-gen game console with 4K graphics and ray tracing",
+    price: 499,
     stock: 45,
     discount: 0,
     tags: ["gaming", "console", "sony"],
@@ -497,12 +497,12 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400",
     ],
     weight: 4500,
-    varian: [
+    variants: [
       {
         id: "16-1",
         name: "Edition",
         value: "Digital",
-        priceModifier: -1000000,
+        priceModifier: -100,
         stockModifier: 0,
       },
       {
@@ -517,8 +517,8 @@ export const mockProducts: Product[] = [
   {
     id: "17",
     name: "Pull&Bear Denim Jacket",
-    description: "Jaket denim dengan potongan modern dan casual",
-    price: 800000,
+    description: "Denim jacket with modern and casual cut",
+    price: 60,
     stock: 120,
     discount: 35,
     tags: ["jaket", "denim", "casual"],
@@ -529,7 +529,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1576995853123-5a10305d93c2?w=400",
     ],
     weight: 400,
-    varian: [
+    variants: [
       {
         id: "17-1",
         name: "Size",
@@ -549,8 +549,8 @@ export const mockProducts: Product[] = [
   {
     id: "18",
     name: "Bose QuietComfort 45",
-    description: "Headphone wireless dengan noise cancelling premium",
-    price: 3800000,
+    description: "Wireless headphones with premium noise cancelling",
+    price: 329,
     stock: 55,
     discount: 15,
     tags: ["headphone", "wireless", "bose"],
@@ -561,7 +561,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400",
     ],
     weight: 240,
-    varian: [
+    variants: [
       {
         id: "18-1",
         name: "Color",
@@ -581,8 +581,8 @@ export const mockProducts: Product[] = [
   {
     id: "19",
     name: "Mango Pleated Skirt",
-    description: "Rok plis dengan potongan elegan dan nyaman",
-    price: 600000,
+    description: "Pleated skirt with elegant and comfortable cut",
+    price: 50,
     stock: 90,
     discount: 25,
     tags: ["rok", "formal", "mango"],
@@ -593,7 +593,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400",
     ],
     weight: 200,
-    varian: [
+    variants: [
       {
         id: "19-1",
         name: "Size",
@@ -613,8 +613,8 @@ export const mockProducts: Product[] = [
   {
     id: "20",
     name: "Microsoft Surface Laptop 5",
-    description: "Laptop premium dengan desain tipis dan performa tinggi",
-    price: 20000000,
+    description: "Premium laptop with slim design and high performance",
+    price: 1599,
     stock: 30,
     discount: 12,
     tags: ["laptop", "microsoft", "surface"],
@@ -625,7 +625,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400",
     ],
     weight: 1270,
-    varian: [
+    variants: [
       {
         id: "20-1",
         name: "Storage",
@@ -637,7 +637,7 @@ export const mockProducts: Product[] = [
         id: "20-2",
         name: "Storage",
         value: "512GB",
-        priceModifier: 2500000,
+        priceModifier: 200,
         stockModifier: 0,
       },
     ],
@@ -645,8 +645,8 @@ export const mockProducts: Product[] = [
   {
     id: "21",
     name: "Vans Old Skool",
-    description: "Sepatu skate dengan sidestripe ikonik dan nyaman",
-    price: 1500000,
+    description: "Skate shoes with iconic sidestripe and comfortable fit",
+    price: 70,
     stock: 150,
     discount: 18,
     tags: ["sepatu", "skate", "vans"],
@@ -657,7 +657,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400",
     ],
     weight: 350,
-    varian: [
+    variants: [
       {
         id: "21-1",
         name: "Size",
@@ -677,8 +677,8 @@ export const mockProducts: Product[] = [
   {
     id: "22",
     name: "GoPro Hero 11 Black",
-    description: "Action camera dengan stabilisasi HyperSmooth 5.0",
-    price: 7500000,
+    description: "Action camera with HyperSmooth 5.0 stabilization",
+    price: 399,
     stock: 40,
     discount: 10,
     tags: ["camera", "action", "gopro"],
@@ -689,7 +689,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
     ],
     weight: 153,
-    varian: [
+    variants: [
       {
         id: "22-1",
         name: "Kit",
@@ -701,7 +701,7 @@ export const mockProducts: Product[] = [
         id: "22-2",
         name: "Kit",
         value: "Creator Edition",
-        priceModifier: 1500000,
+        priceModifier: 100,
         stockModifier: 0,
       },
     ],
@@ -709,8 +709,8 @@ export const mockProducts: Product[] = [
   {
     id: "23",
     name: "COS Oversized Sweater",
-    description: "Sweater oversized dengan bahan premium dan potongan modern",
-    price: 1200000,
+    description: "Oversized sweater with premium material and modern cut",
+    price: 120,
     stock: 70,
     discount: 30,
     tags: ["sweater", "oversized", "cos"],
@@ -721,7 +721,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400",
     ],
     weight: 280,
-    varian: [
+    variants: [
       {
         id: "23-1",
         name: "Size",
@@ -741,8 +741,8 @@ export const mockProducts: Product[] = [
   {
     id: "24",
     name: "Nintendo Switch OLED",
-    description: "Konsol game hybrid dengan layar OLED 7 inci",
-    price: 4500000,
+    description: "Hybrid game console with 7-inch OLED display",
+    price: 349,
     stock: 80,
     discount: 5,
     tags: ["gaming", "console", "nintendo"],
@@ -753,7 +753,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=400",
     ],
     weight: 420,
-    varian: [
+    variants: [
       {
         id: "24-1",
         name: "Color",
@@ -773,8 +773,8 @@ export const mockProducts: Product[] = [
   {
     id: "25",
     name: "ASOS Design Cargo Pants",
-    description: "Celana cargo dengan potongan relaxed dan saku fungsional",
-    price: 500000,
+    description: "Cargo pants with relaxed fit and functional pockets",
+    price: 45,
     stock: 180,
     discount: 40,
     tags: ["celana", "cargo", "casual"],
@@ -785,7 +785,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400",
     ],
     weight: 320,
-    varian: [
+    variants: [
       {
         id: "25-1",
         name: "Size",
@@ -805,8 +805,8 @@ export const mockProducts: Product[] = [
   {
     id: "26",
     name: "Samsung QLED 4K TV",
-    description: "Smart TV dengan teknologi QLED dan resolusi 4K",
-    price: 15000000,
+    description: "Smart TV with QLED technology and 4K resolution",
+    price: 1200,
     stock: 20,
     discount: 15,
     tags: ["tv", "smart", "samsung"],
@@ -817,7 +817,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400",
     ],
     weight: 15000,
-    varian: [
+    variants: [
       {
         id: "26-1",
         name: "Size",
@@ -829,7 +829,7 @@ export const mockProducts: Product[] = [
         id: "26-2",
         name: "Size",
         value: "65 inch",
-        priceModifier: 5000000,
+        priceModifier: 500,
         stockModifier: 0,
       },
     ],
@@ -837,8 +837,8 @@ export const mockProducts: Product[] = [
   {
     id: "27",
     name: "Topshop Mom Jeans",
-    description: "Celana jeans dengan potongan mom fit yang trendy",
-    price: 900000,
+    description: "Mom-fit jeans with trendy cut",
+    price: 55,
     stock: 120,
     discount: 25,
     tags: ["celana", "jeans", "trendy"],
@@ -849,7 +849,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
     ],
     weight: 380,
-    varian: [
+    variants: [
       {
         id: "27-1",
         name: "Size",
@@ -869,8 +869,8 @@ export const mockProducts: Product[] = [
   {
     id: "28",
     name: "JBL Flip 6",
-    description: "Speaker portable dengan suara jernih dan tahan air",
-    price: 1800000,
+    description: "Portable speaker with clear sound and waterproof design",
+    price: 129,
     stock: 100,
     discount: 20,
     tags: ["speaker", "portable", "jbl"],
@@ -881,7 +881,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400",
     ],
     weight: 550,
-    varian: [
+    variants: [
       {
         id: "28-1",
         name: "Color",
@@ -901,8 +901,8 @@ export const mockProducts: Product[] = [
   {
     id: "29",
     name: "River Island Denim Shirt",
-    description: "Kemeja denim dengan potongan casual dan nyaman",
-    price: 700000,
+    description: "Denim shirt with casual and comfortable cut",
+    price: 45,
     stock: 95,
     discount: 30,
     tags: ["kemeja", "denim", "casual"],
@@ -913,7 +913,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400",
     ],
     weight: 250,
-    varian: [
+    variants: [
       {
         id: "29-1",
         name: "Size",
@@ -933,8 +933,8 @@ export const mockProducts: Product[] = [
   {
     id: "30",
     name: "LG OLED C3",
-    description: "Smart TV OLED dengan teknologi AI dan gaming features",
-    price: 18000000,
+    description: "OLED Smart TV with AI technology and gaming features",
+    price: 1800,
     stock: 15,
     discount: 8,
     tags: ["tv", "oled", "lg"],
@@ -945,7 +945,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400",
     ],
     weight: 18000,
-    varian: [
+    variants: [
       {
         id: "30-1",
         name: "Size",
@@ -957,7 +957,7 @@ export const mockProducts: Product[] = [
         id: "30-2",
         name: "Size",
         value: "65 inch",
-        priceModifier: 6000000,
+        priceModifier: 600,
         stockModifier: 0,
       },
     ],
@@ -965,8 +965,8 @@ export const mockProducts: Product[] = [
   {
     id: "31",
     name: "New Look Midi Dress",
-    description: "Dress midi dengan potongan elegan untuk acara formal",
-    price: 800000,
+    description: "Midi dress with elegant cut for formal events",
+    price: 60,
     stock: 60,
     discount: 35,
     tags: ["dress", "formal", "midi"],
@@ -977,7 +977,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400",
     ],
     weight: 180,
-    varian: [
+    variants: [
       {
         id: "31-1",
         name: "Size",
@@ -997,8 +997,8 @@ export const mockProducts: Product[] = [
   {
     id: "32",
     name: "Beats Studio Pro",
-    description: "Headphone wireless dengan Active Noise Cancelling",
-    price: 3200000,
+    description: "Wireless headphones with Active Noise Cancelling",
+    price: 349,
     stock: 65,
     discount: 18,
     tags: ["headphone", "wireless", "beats"],
@@ -1009,7 +1009,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400",
     ],
     weight: 260,
-    varian: [
+    variants: [
       {
         id: "32-1",
         name: "Color",
@@ -1030,7 +1030,7 @@ export const mockProducts: Product[] = [
     id: "33",
     name: "Bershka Oversized Hoodie",
     description: "Hoodie oversized dengan bahan nyaman dan potongan trendy",
-    price: 400000,
+    price: 40,
     stock: 200,
     discount: 45,
     tags: ["hoodie", "oversized", "bershka"],
@@ -1041,7 +1041,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400",
     ],
     weight: 350,
-    varian: [
+    variants: [
       {
         id: "33-1",
         name: "Size",
@@ -1062,7 +1062,7 @@ export const mockProducts: Product[] = [
     id: "34",
     name: "Xbox Series X",
     description: "Konsol game next-gen dengan performa 4K gaming",
-    price: 7500000,
+    price: 499,
     stock: 35,
     discount: 0,
     tags: ["gaming", "console", "xbox"],
@@ -1073,7 +1073,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400",
     ],
     weight: 4450,
-    varian: [
+    variants: [
       {
         id: "34-1",
         name: "Edition",
@@ -1085,7 +1085,7 @@ export const mockProducts: Product[] = [
         id: "34-2",
         name: "Edition",
         value: "Halo Infinite",
-        priceModifier: 500000,
+        priceModifier: 50,
         stockModifier: 0,
       },
     ],
@@ -1095,7 +1095,7 @@ export const mockProducts: Product[] = [
     name: "Pull&Bear Cargo Shorts",
     description:
       "Celana pendek cargo dengan potongan relaxed dan saku fungsional",
-    price: 350000,
+    price: 30,
     stock: 150,
     discount: 50,
     tags: ["celana", "cargo", "shorts"],
@@ -1106,7 +1106,7 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400",
     ],
     weight: 200,
-    varian: [
+    variants: [
       {
         id: "35-1",
         name: "Size",
@@ -1128,10 +1128,10 @@ export const mockProducts: Product[] = [
 export const categories = ["All", "Electronics", "Fashion"];
 
 export const sortFields = [
-  { value: "name", label: "Nama Produk" },
-  { value: "price", label: "Harga" },
-  { value: "discount", label: "Diskon" },
-  { value: "stock", label: "Stok" },
-  { value: "createdAt", label: "Tanggal Dibuat" },
-  { value: "updatedAt", label: "Tanggal Diupdate" },
+  { value: "name", label: "Product Name" },
+  { value: "price", label: "Price" },
+  { value: "discount", label: "Discount" },
+  { value: "stock", label: "Stock" },
+  { value: "createdAt", label: "Created At" },
+  { value: "updatedAt", label: "Updated At" },
 ];

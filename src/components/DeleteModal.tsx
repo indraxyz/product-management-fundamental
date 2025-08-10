@@ -8,7 +8,7 @@ interface DeleteModalProps {
   onConfirm: (product: Product) => void;
 }
 
-export const DeleteModal: React.FC<DeleteModalProps> = ({
+const DeleteModalComponent: React.FC<DeleteModalProps> = ({
   product,
   isOpen,
   onClose,
@@ -22,9 +22,9 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("id-ID", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "IDR",
+      currency: "USD",
     }).format(price);
   };
 
@@ -62,10 +62,10 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
                     </div>
                     <div className="ml-3">
                       <h2 className="text-lg font-semibold text-red-900">
-                        Hapus Produk
+                        Delete Product
                       </h2>
                       <p className="text-sm text-red-600">
-                        Konfirmasi penghapusan produk
+                        Confirm product deletion
                       </p>
                     </div>
                   </div>
@@ -108,11 +108,11 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
                       />
                     </svg>
                     <h3 className="mt-4 text-lg font-medium text-gray-900">
-                      Konfirmasi Penghapusan
+                      Delete Confirmation
                     </h3>
                     <p className="mt-2 text-sm text-gray-600">
-                      Anda yakin ingin menghapus produk ini? Tindakan ini tidak
-                      dapat dibatalkan.
+                      Are you sure you want to delete this product? This action
+                      cannot be undone.
                     </p>
                   </div>
 
@@ -142,10 +142,10 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
                         </p>
                         <div className="mt-1 flex items-center space-x-4 text-sm">
                           <span className="text-gray-600">
-                            Stok: {product.stock}
+                            Stock: {product.stock}
                           </span>
                           <span className="text-gray-600">
-                            Harga: {formatPrice(product.price)}
+                            Price: {formatPrice(product.price)}
                           </span>
                         </div>
                       </div>
@@ -153,7 +153,7 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
                   </div>
 
                   {/* Warning */}
-                  <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  {/* <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex">
                       <div className="flex-shrink-0">
                         <svg
@@ -172,33 +172,27 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
                       </div>
                       <div className="ml-3">
                         <h4 className="text-sm font-medium text-yellow-900">
-                          Peringatan
+                          Warning
                         </h4>
                         <ul className="mt-2 text-sm text-yellow-700 list-disc list-inside space-y-1">
-                          <li>Produk akan dihapus secara permanen</li>
-                          <li>Semua data produk akan hilang</li>
-                          <li>Tindakan ini tidak dapat dibatalkan</li>
+                          <li>The product will be permanently deleted</li>
+                          <li>All product data will be lost</li>
+                          <li>This action cannot be undone</li>
                         </ul>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
               {/* Footer */}
               <div className="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
                 <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={onClose}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                  >
-                    Batal
+                  <button onClick={onClose} className="btn btn-secondary">
+                    Cancel
                   </button>
-                  <button
-                    onClick={handleConfirm}
-                    className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                  >
-                    Hapus Produk
+                  <button onClick={handleConfirm} className="btn btn-danger">
+                    Delete Product
                   </button>
                 </div>
               </div>
@@ -209,3 +203,5 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
     </div>
   );
 };
+
+export default DeleteModalComponent;

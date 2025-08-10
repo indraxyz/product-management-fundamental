@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import type {
   ProductFilters as ProductFiltersType,
   SortField,
@@ -25,107 +25,248 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   onDeleteSelected,
   onDeselectAll,
 }) => {
-  const handleSearchChange = (value: string) => {
-    onUpdateFilters({ search: value });
-  };
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [searchText, setSearchText] = useState(filters.search);
 
-  const handleCategoryChange = (value: string) => {
-    onUpdateFilters({ category: value });
-  };
+  // Sink external changes (e.g., reset all) into input value
+  React.useEffect(() => {
+    setSearchText(filters.search);
+  }, [filters.search]);
 
-  const handleSortChange = (field: SortField, direction: SortDirection) => {
-    onUpdateSort(field, direction);
-  };
+  const debounceRef = useRef<number | null>(null);
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchText(value);
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = window.setTimeout(() => {
+        onUpdateFilters({ search: value });
+      }, 250);
+    },
+    [onUpdateFilters]
+  );
 
-  const handleDeleteSelected = () => {
+  const handleCategoryChange = useCallback(
+    (value: string) => {
+      onUpdateFilters({ category: value });
+    },
+    [onUpdateFilters]
+  );
+
+  const handleSortChange = useCallback(
+    (field: SortField, direction: SortDirection) => {
+      onUpdateSort(field, direction);
+    },
+    [onUpdateSort]
+  );
+
+  const handleDeleteSelected = useCallback(() => {
     if (selectedCount === 0) {
       return;
     }
     onDeleteSelected();
-  };
+  }, [selectedCount, onDeleteSelected]);
 
-  const handleDeselectAll = () => {
+  const handleDeselectAll = useCallback(() => {
     onDeselectAll();
-  };
+  }, [onDeselectAll]);
+
+  const activeBadges = useMemo(() => {
+    const items: Array<{
+      key: string;
+      label: string;
+      onClear: () => void;
+    }> = [];
+    if (filters.search) {
+      items.push({
+        key: "search",
+        label: `Search: "${filters.search}"`,
+        onClear: () => handleSearchChange(""),
+      });
+    }
+    if (filters.category && filters.category !== "All") {
+      items.push({
+        key: "category",
+        label: `Category: ${filters.category}`,
+        onClear: () => handleCategoryChange("All"),
+      });
+    }
+    // Treat sort as removable preference for quick reset
+    if (filters.sortField !== "name" || filters.sortDirection !== "asc") {
+      items.push({
+        key: "sort",
+        label: `Sort: ${
+          sortFields.find((f) => f.value === filters.sortField)?.label
+        } (${filters.sortDirection === "asc" ? "A-Z" : "Z-A"})`,
+        onClear: () => handleSortChange("name", "asc"),
+      });
+    }
+    return items;
+  }, [filters, handleCategoryChange, handleSearchChange, handleSortChange]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Search */}
-        <div>
+    <div className="card p-6 mb-6">
+      {/* Main controls: Search + Toggle Advanced */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div className="w-full md:max-w-xl">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Cari Produk
+            Search Products
           </label>
-          <input
-            type="text"
-            value={filters.search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Nama, deskripsi, atau tag..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
+          <div className="relative">
+            <svg
+              className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+              />
+            </svg>
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Name, description, or tags..."
+              className="input pl-9"
+            />
+            {searchText && (
+              <button
+                type="button"
+                onClick={() => handleSearchChange("")}
+                className="absolute right-1 top-1/2 -translate-y-1/2 btn btn-secondary px-2 py-1 text-xs"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
-
-        {/* Category Filter */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Kategori
-          </label>
-          <select
-            value={filters.category}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        <div className="flex items-center gap-2 self-start md:self-auto">
+          <button
+            type="button"
+            onClick={() => setShowAdvanced((v) => !v)}
+            className="btn btn-secondary"
           >
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Sort Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Urutkan Berdasarkan
-          </label>
-          <select
-            value={filters.sortField}
-            onChange={(e) =>
-              handleSortChange(
-                e.target.value as SortField,
-                filters.sortDirection
-              )
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            {sortFields.map((field) => (
-              <option key={field.value} value={field.value}>
-                {field.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Sort Direction */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Arah Urutan
-          </label>
-          <select
-            value={filters.sortDirection}
-            onChange={(e) =>
-              handleSortChange(
-                filters.sortField,
-                e.target.value as SortDirection
-              )
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="asc">A-Z (Ascending)</option>
-            <option value="desc">Z-A (Descending)</option>
-          </select>
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h10a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 7a1 1 0 011-1h6a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"
+              />
+            </svg>
+            {showAdvanced ? "Hide Filters" : "Advanced Filters"}
+          </button>
         </div>
       </div>
+
+      {/* Active filters badges */}
+      {activeBadges.length > 0 && (
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-2">
+            {activeBadges.map((item) => (
+              <span
+                key={item.key}
+                className="badge badge-blue text-sm px-3 py-1"
+              >
+                {item.label}
+                <button
+                  type="button"
+                  onClick={item.onClear}
+                  className="ml-2 text-blue-600 hover:text-blue-800"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              handleSearchChange("");
+              handleCategoryChange("All");
+              handleSortChange("name", "asc");
+            }}
+            className="text-sm text-gray-600 hover:text-gray-800 underline"
+          >
+            Reset all
+          </button>
+        </div>
+      )}
+
+      {/* Advanced filters - horizontal scroll */}
+      {showAdvanced && (
+        <div className="mt-4 overflow-x-auto">
+          <div className="flex items-end gap-4 min-w-max pb-1">
+            <div className="w-56">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Category
+              </label>
+              <select
+                value={filters.category}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="select"
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="w-56">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Sort By
+              </label>
+              <select
+                value={filters.sortField}
+                onChange={(e) =>
+                  handleSortChange(
+                    e.target.value as SortField,
+                    filters.sortDirection
+                  )
+                }
+                className="select"
+              >
+                {sortFields.map((field) => (
+                  <option key={field.value} value={field.value}>
+                    {field.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="w-56">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Sort Direction
+              </label>
+              <select
+                value={filters.sortDirection}
+                onChange={(e) =>
+                  handleSortChange(
+                    filters.sortField,
+                    e.target.value as SortDirection
+                  )
+                }
+                className="select"
+              >
+                <option value="asc">A-Z (Ascending)</option>
+                <option value="desc">Z-A (Descending)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Selected Actions */}
       {selectedCount > 0 && (
@@ -133,19 +274,16 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium text-blue-900">
-                {selectedCount} produk dipilih
+                {selectedCount} products selected
               </span>
               <button
                 onClick={handleDeselectAll}
                 className="text-sm text-blue-600 hover:text-blue-800 underline"
               >
-                Batalkan Pilihan
+                Deselect All
               </button>
             </div>
-            <button
-              onClick={handleDeleteSelected}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-            >
+            <button onClick={handleDeleteSelected} className="btn btn-danger">
               <svg
                 className="w-4 h-4 mr-2"
                 fill="none"
@@ -159,7 +297,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                 />
               </svg>
-              Hapus {selectedCount} Produk
+              Delete {selectedCount} Product{selectedCount > 1 ? "s" : ""}
             </button>
           </div>
         </div>
@@ -169,20 +307,20 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="flex items-center justify-between text-sm text-gray-600">
           <span>
-            Menampilkan {totalCount} produk
+            Showing {totalCount} products
             {filters.search && (
               <span className="ml-2 text-blue-600">
-                untuk pencarian "{filters.search}"
+                for query "{filters.search}"
               </span>
             )}
             {filters.category !== "All" && (
               <span className="ml-2 text-blue-600">
-                dalam kategori "{filters.category}"
+                in category "{filters.category}"
               </span>
             )}
           </span>
           <span>
-            Diurutkan berdasarkan{" "}
+            Sorted by{" "}
             {sortFields.find((f) => f.value === filters.sortField)?.label} (
             {filters.sortDirection === "asc" ? "A-Z" : "Z-A"})
           </span>

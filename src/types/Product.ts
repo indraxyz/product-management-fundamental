@@ -11,7 +11,7 @@ export interface Product {
   updatedAt: Date;
   imagesUrl: string[];
   weight: number; // in grams
-  varian: ProductVariant[];
+  variants: ProductVariant[];
 }
 
 export interface ProductVariant {

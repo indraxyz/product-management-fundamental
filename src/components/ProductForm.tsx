@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
-import type { Product, ProductVariant } from "../types/Product";
+import React, { useEffect, useMemo, useState } from "react";
+import type { Product } from "../types/Product";
 import { categories } from "../data/mockProducts";
+import { z } from "zod";
+import { useForm, useFieldArray, type Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface ProductFormProps {
   product: Product | null;
@@ -10,186 +13,140 @@ interface ProductFormProps {
   mode: "add" | "edit";
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({
+const productVariantSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().trim().min(1, "Variant name is required"),
+  value: z.string().trim().min(1, "Variant value is required"),
+  priceModifier: z.coerce
+    .number()
+    .refine((n) => Number.isFinite(n), "Must be a number"),
+  stockModifier: z.coerce
+    .number()
+    .refine((n) => Number.isFinite(n), "Must be a number"),
+});
+
+const productFormSchema = z.object({
+  name: z.string().trim().min(1, "Product name is required"),
+  description: z.string().trim().min(1, "Description is required"),
+  price: z.coerce.number().gt(0, "Price must be greater than 0"),
+  stock: z.coerce.number().min(0, "Stock cannot be negative"),
+  discount: z.coerce
+    .number()
+    .min(0, "Minimum discount is 0%")
+    .max(100, "Maximum discount is 100%"),
+  category: z.string().refine((val) => categories.includes(val), {
+    message: "Invalid category",
+  }),
+  weight: z.coerce.number().gt(0, "Weight must be greater than 0"),
+  tags: z.array(z.string().trim().min(1)).default([]),
+  imagesUrl: z.array(z.string().url("Invalid image URL")).default([]),
+  variants: z.array(productVariantSchema).default([]),
+});
+
+type ProductFormValues = z.infer<typeof productFormSchema>;
+
+const ProductFormComponent: React.FC<ProductFormProps> = ({
   product,
   isOpen,
   onClose,
   onSave,
   mode,
 }) => {
-  const [formData, setFormData] = useState<Partial<Product>>({
-    name: "",
-    description: "",
-    price: 0,
-    stock: 0,
-    discount: 0,
-    tags: [],
-    category: "Electronics",
-    imagesUrl: [],
-    weight: 0,
-    varian: [],
+  const initialValues: ProductFormValues = useMemo(
+    () => ({
+      name: product?.name ?? "",
+      description: product?.description ?? "",
+      price: product?.price ?? 0,
+      stock: product?.stock ?? 0,
+      discount: product?.discount ?? 0,
+      tags: product?.tags ?? [],
+      category: product?.category ?? (categories[0] || ""),
+      imagesUrl: product?.imagesUrl ?? [],
+      weight: product?.weight ?? 0,
+      variants: product?.variants ?? [],
+    }),
+    [product]
+  );
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+    getValues,
+    setValue,
+    watch,
+  } = useForm<ProductFormValues>({
+    resolver: zodResolver(productFormSchema) as Resolver<ProductFormValues>,
+    defaultValues: initialValues,
+    mode: "onBlur",
+    reValidateMode: "onChange",
   });
-  const [newTag, setNewTag] = useState("");
-  const [newImageUrl, setNewImageUrl] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (product && mode === "edit") {
-      setFormData({
-        ...product,
-        createdAt: product.createdAt,
-        updatedAt: new Date(),
-      });
-    } else {
-      setFormData({
-        name: "",
-        description: "",
-        price: 0,
-        stock: 0,
-        discount: 0,
-        tags: [],
-        category: "Electronics",
-        imagesUrl: [],
-        weight: 0,
-        varian: [],
-      });
-    }
-    setErrors({});
-  }, [product, mode]);
+    reset(initialValues);
+  }, [initialValues, reset]);
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
+  const [newTag, setNewTag] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
 
-    if (!formData.name || formData.name.trim() === "") {
-      newErrors.name = "Nama produk harus diisi";
-    }
+  const tags = watch("tags");
+  const images = watch("imagesUrl");
 
-    if (!formData.description || formData.description.trim() === "") {
-      newErrors.description = "Deskripsi produk harus diisi";
-    }
+  const {
+    fields: variantFields,
+    append: appendVariant,
+    remove: removeVariantAt,
+  } = useFieldArray({ control, name: "variants", keyName: "formId" });
 
-    if (!formData.price || formData.price <= 0) {
-      newErrors.price = "Harga harus lebih dari 0";
-    }
-
-    if (formData.stock === undefined || formData.stock < 0) {
-      newErrors.stock = "Stok tidak boleh negatif";
-    }
-
-    if (
-      formData.discount === undefined ||
-      formData.discount < 0 ||
-      formData.discount > 100
-    ) {
-      newErrors.discount = "Diskon harus antara 0-100%";
-    }
-
-    if (!formData.category) {
-      newErrors.category = "Kategori harus dipilih";
-    }
-
-    if (!formData.weight || formData.weight <= 0) {
-      newErrors.weight = "Berat harus lebih dari 0";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+  const onSubmit = (values: ProductFormValues) => {
     const newProduct: Product = {
       id: product?.id || Date.now().toString(),
-      name: formData.name || "",
-      description: formData.description || "",
-      price: formData.price || 0,
-      stock: formData.stock || 0,
-      discount: formData.discount || 0,
-      tags: formData.tags || [],
-      category: formData.category || "Electronics",
-      imagesUrl: formData.imagesUrl || [],
-      weight: formData.weight || 0,
-      varian: formData.varian || [],
+      name: values.name,
+      description: values.description,
+      price: values.price,
+      stock: values.stock,
+      discount: values.discount,
+      tags: values.tags,
+      category: values.category,
+      imagesUrl: values.imagesUrl,
+      weight: values.weight,
+      variants: values.variants,
       createdAt: product?.createdAt || new Date(),
       updatedAt: new Date(),
     };
-
     onSave(newProduct);
   };
 
-  const handleInputChange = (
-    field: string,
-    value: string | number | string[] | ProductVariant[]
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
-
   const addTag = () => {
-    if (newTag.trim() && !formData.tags?.includes(newTag.trim())) {
-      handleInputChange("tags", [...(formData.tags || []), newTag.trim()]);
-      setNewTag("");
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    handleInputChange(
-      "tags",
-      formData.tags?.filter((tag) => tag !== tagToRemove) || []
-    );
+    const value = newTag.trim();
+    if (!value) return;
+    const current = getValues("tags") ?? [];
+    if (current.includes(value)) return;
+    const next = [...current, value];
+    setValue("tags", next, { shouldDirty: true, shouldValidate: true });
+    setNewTag("");
   };
 
   const addImageUrl = () => {
-    if (
-      newImageUrl.trim() &&
-      !formData.imagesUrl?.includes(newImageUrl.trim())
-    ) {
-      handleInputChange("imagesUrl", [
-        ...(formData.imagesUrl || []),
-        newImageUrl.trim(),
-      ]);
-      setNewImageUrl("");
-    }
-  };
-
-  const removeImageUrl = (index: number) => {
-    const newImages = formData.imagesUrl?.filter((_, i) => i !== index) || [];
-    handleInputChange("imagesUrl", newImages);
+    const value = newImageUrl.trim();
+    if (!value) return;
+    const current = getValues("imagesUrl") ?? [];
+    if (current.includes(value)) return;
+    const next = [...current, value];
+    setValue("imagesUrl", next, { shouldDirty: true, shouldValidate: true });
+    setNewImageUrl("");
   };
 
   const addVariant = () => {
-    const newVariant: ProductVariant = {
+    appendVariant({
       id: Date.now().toString(),
       name: "",
       value: "",
       priceModifier: 0,
       stockModifier: 0,
-    };
-    const newVariants = [...(formData.varian || []), newVariant];
-    handleInputChange("varian", newVariants);
-  };
-
-  const updateVariant = (
-    index: number,
-    field: keyof ProductVariant,
-    value: string | number
-  ) => {
-    const newVariants = formData.varian?.map((variant, i) =>
-      i === index ? { ...variant, [field]: value } : variant
-    );
-    handleInputChange("varian", newVariants || []);
-  };
-
-  const removeVariant = (index: number) => {
-    const newVariants = formData.varian?.filter((_, i) => i !== index) || [];
-    handleInputChange("varian", newVariants);
+    });
   };
 
   if (!isOpen) return null;
@@ -197,21 +154,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
-        {/* Background overlay */}
         <div
           className="absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity"
           onClick={onClose}
         ></div>
 
-        {/* Drawer panel */}
         <div className="fixed inset-y-0 right-0 pl-10 max-w-full flex">
-          <div className="w-screen max-w-md">
+          <div className="w-screen max-w-xl">
             <div className="h-full flex flex-col bg-white shadow-xl">
-              {/* Header */}
-              <div className="px-4 py-6 bg-gray-50 sm:px-6">
+              <div className="px-6 py-6 bg-gray-50">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-medium text-gray-900">
-                    {mode === "add" ? "Tambah Produk Baru" : "Edit Produk"}
+                    {mode === "add" ? "Add New Product" : "Edit Product"}
                   </h2>
                   <button
                     onClick={onClose}
@@ -234,74 +188,63 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </div>
               </div>
 
-              {/* Form content */}
               <div className="flex-1 overflow-y-auto">
-                <form onSubmit={handleSubmit} className="px-4 py-6 space-y-6">
-                  {/* Basic Information */}
+                <form
+                  id="product-form"
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="px-6 py-6 space-y-6"
+                >
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">
-                      Informasi Dasar
+                      Basic Information
                     </h3>
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Nama Produk *
+                          Product Name *
                         </label>
                         <input
                           type="text"
-                          value={formData.name || ""}
-                          onChange={(e) =>
-                            handleInputChange("name", e.target.value)
-                          }
-                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.name ? "border-red-500" : "border-gray-300"
+                          {...register("name")}
+                          className={`input ${
+                            errors.name ? "border-red-500" : ""
                           }`}
-                          placeholder="Masukkan nama produk"
+                          placeholder="Enter product name"
                         />
                         {errors.name && (
                           <p className="mt-1 text-sm text-red-600">
-                            {errors.name}
+                            {errors.name.message}
                           </p>
                         )}
                       </div>
 
-                      <div>
+                      <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Deskripsi *
+                          Description *
                         </label>
                         <textarea
-                          value={formData.description || ""}
-                          onChange={(e) =>
-                            handleInputChange("description", e.target.value)
-                          }
                           rows={3}
-                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.description
-                              ? "border-red-500"
-                              : "border-gray-300"
+                          {...register("description")}
+                          className={`input ${
+                            errors.description ? "border-red-500" : ""
                           }`}
-                          placeholder="Masukkan deskripsi produk"
+                          placeholder="Enter product description"
                         />
                         {errors.description && (
                           <p className="mt-1 text-sm text-red-600">
-                            {errors.description}
+                            {errors.description.message}
                           </p>
                         )}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Kategori *
+                          Category *
                         </label>
                         <select
-                          value={formData.category || ""}
-                          onChange={(e) =>
-                            handleInputChange("category", e.target.value)
-                          }
-                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.category
-                              ? "border-red-500"
-                              : "border-gray-300"
+                          {...register("category")}
+                          className={`select ${
+                            errors.category ? "border-red-500" : ""
                           }`}
                         >
                           {categories.map((category) => (
@@ -312,152 +255,146 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         </select>
                         {errors.category && (
                           <p className="mt-1 text-sm text-red-600">
-                            {errors.category}
+                            {errors.category.message}
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Price and Stock */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">
-                      Harga & Stok
+                      Price & Stock
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Harga (IDR) *
+                          Price (USD) *
                         </label>
                         <input
                           type="number"
-                          value={formData.price || ""}
-                          onChange={(e) =>
-                            handleInputChange("price", Number(e.target.value))
-                          }
-                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.price ? "border-red-500" : "border-gray-300"
+                          {...register("price")}
+                          className={`input ${
+                            errors.price ? "border-red-500" : ""
                           }`}
                           placeholder="0"
                         />
                         {errors.price && (
                           <p className="mt-1 text-sm text-red-600">
-                            {errors.price}
+                            {errors.price.message}
                           </p>
                         )}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Stok *
+                          Stock *
                         </label>
                         <input
                           type="number"
-                          value={formData.stock || ""}
-                          onChange={(e) =>
-                            handleInputChange("stock", Number(e.target.value))
-                          }
-                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.stock ? "border-red-500" : "border-gray-300"
+                          {...register("stock")}
+                          className={`input ${
+                            errors.stock ? "border-red-500" : ""
                           }`}
                           placeholder="0"
                         />
                         {errors.stock && (
                           <p className="mt-1 text-sm text-red-600">
-                            {errors.stock}
+                            {errors.stock.message}
                           </p>
                         )}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Diskon (%)
+                          Discount (%)
                         </label>
                         <input
                           type="number"
-                          value={formData.discount || ""}
-                          onChange={(e) =>
-                            handleInputChange(
-                              "discount",
-                              Number(e.target.value)
-                            )
-                          }
-                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.discount
-                              ? "border-red-500"
-                              : "border-gray-300"
+                          {...register("discount")}
+                          className={`input ${
+                            errors.discount ? "border-red-500" : ""
                           }`}
                           placeholder="0"
-                          min="0"
-                          max="100"
+                          min={0}
+                          max={100}
                         />
                         {errors.discount && (
                           <p className="mt-1 text-sm text-red-600">
-                            {errors.discount}
+                            {errors.discount.message}
                           </p>
                         )}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Berat (gram) *
+                          Weight (grams) *
                         </label>
                         <input
                           type="number"
-                          value={formData.weight || ""}
-                          onChange={(e) =>
-                            handleInputChange("weight", Number(e.target.value))
-                          }
-                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.weight ? "border-red-500" : "border-gray-300"
+                          {...register("weight")}
+                          className={`input ${
+                            errors.weight ? "border-red-500" : ""
                           }`}
                           placeholder="0"
                         />
                         {errors.weight && (
                           <p className="mt-1 text-sm text-red-600">
-                            {errors.weight}
+                            {errors.weight.message}
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Tags */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">
                       Tags
                     </h3>
                     <div className="space-y-3">
-                      <div className="flex space-x-2">
+                      <div className="flex gap-2">
                         <input
                           type="text"
                           value={newTag}
                           onChange={(e) => setNewTag(e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Masukkan tag"
-                          onKeyPress={(e) =>
-                            e.key === "Enter" && (e.preventDefault(), addTag())
-                          }
+                          className="flex-1 input"
+                          placeholder="Enter a tag"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              addTag();
+                            }
+                          }}
                         />
                         <button
                           type="button"
                           onClick={addTag}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                          className="btn btn-primary"
                         >
-                          Tambah
+                          Add
                         </button>
                       </div>
-                      {formData.tags && formData.tags.length > 0 && (
+
+                      {tags && tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
-                          {formData.tags.map((tag, index) => (
+                          {tags.map((value, index) => (
                             <span
-                              key={index}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                              key={`${value}-${index}`}
+                              className="badge badge-blue text-sm px-3 py-1"
                             >
-                              {tag}
+                              {value}
                               <button
                                 type="button"
-                                onClick={() => removeTag(tag)}
+                                onClick={() => {
+                                  const current = getValues("tags") ?? [];
+                                  const next = current.filter(
+                                    (_, i) => i !== index
+                                  );
+                                  setValue("tags", next, {
+                                    shouldDirty: true,
+                                    shouldValidate: true,
+                                  });
+                                }}
                                 className="ml-2 text-blue-600 hover:text-blue-800"
                               >
                                 ×
@@ -469,37 +406,39 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </div>
                   </div>
 
-                  {/* Images */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">
-                      Gambar
+                      Images
                     </h3>
                     <div className="space-y-3">
-                      <div className="flex space-x-2">
+                      <div className="flex gap-2">
                         <input
                           type="url"
                           value={newImageUrl}
                           onChange={(e) => setNewImageUrl(e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Masukkan URL gambar"
-                          onKeyPress={(e) =>
-                            e.key === "Enter" &&
-                            (e.preventDefault(), addImageUrl())
-                          }
+                          className="flex-1 input"
+                          placeholder="Enter image URL"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              addImageUrl();
+                            }
+                          }}
                         />
                         <button
                           type="button"
                           onClick={addImageUrl}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                          className="btn btn-primary"
                         >
-                          Tambah
+                          Add
                         </button>
                       </div>
-                      {formData.imagesUrl && formData.imagesUrl.length > 0 && (
+
+                      {images && images.length > 0 && (
                         <div className="space-y-2">
-                          {formData.imagesUrl.map((url, index) => (
+                          {images.map((url, index) => (
                             <div
-                              key={index}
+                              key={`${url}-${index}`}
                               className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
                             >
                               <span className="text-sm text-gray-600 truncate flex-1">
@@ -507,7 +446,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               </span>
                               <button
                                 type="button"
-                                onClick={() => removeImageUrl(index)}
+                                onClick={() => {
+                                  const current = getValues("imagesUrl") ?? [];
+                                  const next = current.filter(
+                                    (_, i) => i !== index
+                                  );
+                                  setValue("imagesUrl", next, {
+                                    shouldDirty: true,
+                                    shouldValidate: true,
+                                  });
+                                }}
                                 className="ml-2 text-red-600 hover:text-red-800"
                               >
                                 ×
@@ -516,111 +464,114 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           ))}
                         </div>
                       )}
+                      {errors.imagesUrl && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Invalid image URL
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Variants */}
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-medium text-gray-900">
-                        Varian
+                        Variants
                       </h3>
                       <button
                         type="button"
                         onClick={addVariant}
-                        className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm"
+                        className="btn btn-primary text-sm px-3 py-1"
                       >
-                        Tambah Varian
+                        Add Variant
                       </button>
                     </div>
-                    {formData.varian && formData.varian.length > 0 && (
+
+                    {variantFields.length > 0 && (
                       <div className="space-y-3">
-                        {formData.varian.map((variant, index) => (
+                        {variantFields.map((field, index) => (
                           <div
-                            key={variant.id}
+                            key={field.formId}
                             className="p-4 border border-gray-200 rounded-md space-y-3"
                           >
                             <div className="flex items-center justify-between">
                               <h4 className="text-sm font-medium text-gray-900">
-                                Varian {index + 1}
+                                Variant {index + 1}
                               </h4>
                               <button
                                 type="button"
-                                onClick={() => removeVariant(index)}
+                                onClick={() => removeVariantAt(index)}
                                 className="text-red-600 hover:text-red-800"
                               >
-                                Hapus
+                                Delete
                               </button>
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Nama
+                                  Name
                                 </label>
                                 <input
                                   type="text"
-                                  value={variant.name}
-                                  onChange={(e) =>
-                                    updateVariant(index, "name", e.target.value)
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  placeholder="Contoh: Warna, Ukuran"
+                                  {...register(
+                                    `variants.${index}.name` as const
+                                  )}
+                                  className="input"
+                                  placeholder="E.g., Color, Size"
                                 />
+                                {errors.variants?.[index]?.name && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {errors.variants[index]?.name?.message}
+                                  </p>
+                                )}
                               </div>
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Nilai
+                                  Value
                                 </label>
                                 <input
                                   type="text"
-                                  value={variant.value}
-                                  onChange={(e) =>
-                                    updateVariant(
-                                      index,
-                                      "value",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  placeholder="Contoh: Merah, XL"
+                                  {...register(
+                                    `variants.${index}.value` as const
+                                  )}
+                                  className="input"
+                                  placeholder="E.g., Red, XL"
                                 />
+                                {errors.variants?.[index]?.value && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {errors.variants[index]?.value?.message}
+                                  </p>
+                                )}
                               </div>
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Tambahan Harga
+                                  Price Modifier
                                 </label>
                                 <input
                                   type="number"
-                                  value={variant.priceModifier}
-                                  onChange={(e) =>
-                                    updateVariant(
-                                      index,
-                                      "priceModifier",
-                                      Number(e.target.value)
-                                    )
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  {...register(
+                                    `variants.${index}.priceModifier` as const
+                                  )}
+                                  className="input"
                                   placeholder="0"
                                 />
                               </div>
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Tambahan Stok
+                                  Stock Modifier
                                 </label>
                                 <input
                                   type="number"
-                                  value={variant.stockModifier}
-                                  onChange={(e) =>
-                                    updateVariant(
-                                      index,
-                                      "stockModifier",
-                                      Number(e.target.value)
-                                    )
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  {...register(
+                                    `variants.${index}.stockModifier` as const
+                                  )}
+                                  className="input"
                                   placeholder="0"
                                 />
                               </div>
+                              <input
+                                type="hidden"
+                                {...register(`variants.${index}.id` as const)}
+                              />
                             </div>
                           </div>
                         ))}
@@ -630,22 +581,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </form>
               </div>
 
-              {/* Footer */}
-              <div className="flex-shrink-0 px-4 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
                 <div className="flex justify-end space-x-3">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    className="btn btn-secondary"
                   >
-                    Batal
+                    Cancel
                   </button>
                   <button
+                    form="product-form"
                     type="submit"
-                    onClick={handleSubmit}
-                    className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    className="btn btn-primary"
                   >
-                    {mode === "add" ? "Tambah Produk" : "Simpan Perubahan"}
+                    {mode === "add" ? "Add Product" : "Save Changes"}
                   </button>
                 </div>
               </div>
@@ -656,3 +606,5 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     </div>
   );
 };
+
+export default ProductFormComponent;
