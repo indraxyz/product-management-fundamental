@@ -2,7 +2,6 @@ import { Suspense, useState, lazy } from "react";
 import { useProductManager } from "./hooks/useProductManager";
 import { ProductTable } from "./components/ProductTable";
 import { ProductFilters } from "./components/ProductFilters";
-import { LoadMoreButton } from "./components/LoadMoreButton";
 import { ThemeToggle } from "./components/ThemeToggle";
 import type { Product } from "./types/Product";
 
@@ -19,13 +18,12 @@ function App() {
     selectedProducts,
     filters,
     totalProducts,
-    hasMore,
+    isLoading,
     toggleSelectProduct,
     selectAllProducts,
     deselectAllProducts,
     updateFilters,
     updateSort,
-    loadMore,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -159,12 +157,7 @@ function App() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onAddProduct={handleAddProduct}
-        />
-        <LoadMoreButton
-          onLoadMore={loadMore}
-          hasMore={hasMore}
-          currentCount={products.length}
-          totalCount={totalProducts}
+          isLoading={isLoading}
         />
       </div>
 

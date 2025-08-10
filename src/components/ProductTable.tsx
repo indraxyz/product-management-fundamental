@@ -12,6 +12,7 @@ interface ProductTableProps {
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;
   onAddProduct: () => void;
+  isLoading?: boolean;
 }
 
 const priceFormatter = new Intl.NumberFormat("en-US", {
@@ -37,9 +38,10 @@ const TableComponent: React.FC<ProductTableProps> = ({
   onEdit,
   onDelete,
   onAddProduct,
+  isLoading = false,
 }) => {
   const allSelected =
-    products.length > 0 && selectedProducts.length === products.lgitength;
+    products.length > 0 && selectedProducts.length === products.length;
   const someSelected =
     selectedProducts.length > 0 && selectedProducts.length < products.length;
 
@@ -75,62 +77,69 @@ const TableComponent: React.FC<ProductTableProps> = ({
         </div>
       </div>
 
-      {/* Table container with sticky header */}
-      <div className="overflow-x-auto">
-        <div className="max-h-[70vh] overflow-y-auto">
-          <table className="w-full">
-            <thead className="sticky top-0 z-30 bg-gray-50 dark:bg-slate-900 shadow-sm">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={allSelected}
-                    ref={(input) => {
-                      if (input) input.indeterminate = someSelected;
-                    }}
-                    onChange={allSelected ? onDeselectAll : onSelectAll}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800"
-                  />
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  Actions
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  Product
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  Stock
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  Discount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                  Updated
-                </th>
-              </tr>
-            </thead>
+      {/* Table container with proper sticky header and horizontal scroll */}
+      <div className="relative">
+        {/* Sticky header container */}
+        <div className="sticky top-0 z-30 bg-gray-50 dark:bg-slate-900 shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700"></th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 sticky left-0 z-20">
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      ref={(input) => {
+                        if (input) input.indeterminate = someSelected;
+                      }}
+                      onChange={allSelected ? onDeselectAll : onSelectAll}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 mr-2"
+                    />
+                    Actions
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
+                    Product
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
+                    Category
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
+                    Price
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
+                    Stock
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
+                    Discount
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
+                    Updated
+                  </th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+
+        {/* Table body with horizontal scroll */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
             <tbody className="bg-white divide-y divide-gray-200 dark:bg-slate-900 dark:divide-slate-800">
               {products.map((product) => (
                 <tr
                   key={product.id}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      checked={selectedSet.has(product.id)}
-                      onChange={() => onToggleSelect(product.id)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap"></td>
+                  <td className="px-6 py-4 whitespace-nowrap sticky left-0 bg-white dark:bg-slate-900 z-10">
                     <div className="flex space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedSet.has(product.id)}
+                        onChange={() => onToggleSelect(product.id)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2"
+                      />
                       <button
                         onClick={() => onViewDetail(product)}
                         className="icon-btn"
@@ -293,7 +302,38 @@ const TableComponent: React.FC<ProductTableProps> = ({
           </table>
         </div>
       </div>
-      {products.length === 0 && (
+
+      {/* Loading indicator for infinite scroll */}
+      {isLoading && (
+        <div className="px-6 py-4 text-center">
+          <div className="inline-flex items-center px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
+            <svg
+              className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            Loading more products...
+          </div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {products.length === 0 && !isLoading && (
         <div className="px-6 py-12">
           <div className="border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl p-10 text-center bg-gray-50 dark:bg-slate-900">
             <div className="mx-auto h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">

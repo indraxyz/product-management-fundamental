@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import type {
   Product,
   ProductFilters,
@@ -18,7 +18,8 @@ export const useProductManager = () => {
     sortDirection: "asc",
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [showCount, setShowCount] = useState(10);
+  const [showCount, setShowCount] = useState(5); // Changed to 5 items per page
+  const [isLoading, setIsLoading] = useState(false);
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
@@ -60,8 +61,34 @@ export const useProductManager = () => {
   }, [filteredProducts, showCount]);
 
   const loadMore = useCallback(() => {
-    setShowCount((prev) => prev + 10);
-  }, []);
+    if (isLoading) return;
+
+    setIsLoading(true);
+    // Simulate API delay
+    setTimeout(() => {
+      setShowCount((prev) => Math.min(prev + 5, filteredProducts.length));
+      setIsLoading(false);
+    }, 300);
+  }, [isLoading, filteredProducts.length]);
+
+  // Auto-load more when reaching bottom
+  const handleScroll = useCallback(() => {
+    if (isLoading || showCount >= filteredProducts.length) return;
+
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // Load more when user is near bottom (within 100px)
+    if (scrollTop + windowHeight >= documentHeight - 100) {
+      loadMore();
+    }
+  }, [isLoading, showCount, filteredProducts.length, loadMore]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   const toggleSelectProduct = useCallback((productId: string) => {
     setSelectedProducts((prev) =>
@@ -95,7 +122,7 @@ export const useProductManager = () => {
   const updateFilters = useCallback((newFilters: Partial<ProductFilters>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
     setCurrentPage(1);
-    setShowCount(10);
+    setShowCount(5); // Reset to 5 items
   }, []);
 
   const updateSort = useCallback(
@@ -158,6 +185,7 @@ export const useProductManager = () => {
     showCount,
     totalProducts: filteredProducts.length,
     hasMore: paginatedProducts.length < filteredProducts.length,
+    isLoading,
     toggleSelectProduct,
     selectAllProducts,
     deselectAllProducts,

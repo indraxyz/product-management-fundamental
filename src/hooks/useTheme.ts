@@ -35,7 +35,9 @@ export const useTheme = () => {
     applyThemeClass(theme);
     try {
       localStorage.setItem(STORAGE_KEY, theme);
-    } catch {}
+    } catch {
+      console.error("Error saving theme to localStorage");
+    }
   }, [theme]);
 
   useEffect(() => {
