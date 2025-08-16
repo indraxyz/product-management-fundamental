@@ -15,6 +15,7 @@ const DeleteMultipleModal = lazy(
 function App() {
   const {
     products,
+    filteredProducts,
     selectedProducts,
     filters,
     totalProducts,
@@ -144,6 +145,8 @@ function App() {
           onUpdateSort={updateSort}
           selectedCount={selectedProducts.length}
           totalCount={totalProducts}
+          filteredCount={filteredProducts.length}
+          displayedCount={products.length}
           onDeleteSelected={handleDeleteSelected}
           onDeselectAll={deselectAllProducts}
         />

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import type {
   Product,
   ProductFilters,
@@ -7,6 +7,11 @@ import type {
 } from "../types/Product";
 import { mockProducts } from "../data/mockProducts";
 import toast from "react-hot-toast";
+
+// Constants for better maintainability
+const ITEMS_PER_PAGE = 5;
+const SCROLL_THRESHOLD = 100;
+const API_DELAY = 300;
 
 export const useProductManager = () => {
   const [products, setProducts] = useState<Product[]>(mockProducts);
@@ -18,84 +23,197 @@ export const useProductManager = () => {
     sortDirection: "asc",
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [showCount, setShowCount] = useState(5); // Changed to 5 items per page
+  const [showCount, setShowCount] = useState(ITEMS_PER_PAGE);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Use refs to prevent unnecessary re-renders and stale closures
+  const isLoadingRef = useRef(false);
+  const showCountRef = useRef(ITEMS_PER_PAGE);
+  const filteredProductsRef = useRef<Product[]>([]);
+
+  // Memoize search terms to avoid unnecessary recalculations
+  const searchTerms = useMemo(() => {
+    if (!filters.search.trim()) return null;
+    return filters.search.toLowerCase().trim();
+  }, [filters.search]);
+
+  // Optimized filtering with early returns and better performance
   const filteredProducts = useMemo(() => {
-    let filtered = [...products];
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchLower) ||
-          product.description.toLowerCase().includes(searchLower) ||
-          product.tags.some((tag) => tag.toLowerCase().includes(searchLower))
-      );
+    let filtered = products;
+
+    // Early return if no filters applied
+    if (!searchTerms && filters.category === "All") {
+      return products;
     }
-    // Category filter
-    if (filters.category && filters.category !== "All") {
+
+    // Apply search filter only if search terms exist
+    if (searchTerms) {
+      filtered = filtered.filter((product) => {
+        const nameMatch = product.name.toLowerCase().includes(searchTerms);
+        if (nameMatch) return true;
+
+        const descMatch = product.description
+          .toLowerCase()
+          .includes(searchTerms);
+        if (descMatch) return true;
+
+        // Use some() with early return for better performance
+        return product.tags.some((tag) =>
+          tag.toLowerCase().includes(searchTerms)
+        );
+      });
+    }
+
+    // Apply category filter
+    if (filters.category !== "All") {
       filtered = filtered.filter(
         (product) => product.category === filters.category
       );
     }
-    // Sorting
-    filtered.sort((a, b) => {
-      const aValue = a[filters.sortField];
-      const bValue = b[filters.sortField];
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        const comparison = aValue
-          .toLowerCase()
-          .localeCompare(bValue.toLowerCase());
-        return filters.sortDirection === "asc" ? comparison : -comparison;
-      }
-      if (aValue < bValue) return filters.sortDirection === "asc" ? -1 : 1;
-      if (aValue > bValue) return filters.sortDirection === "asc" ? 1 : -1;
-      return 0;
-    });
-    return filtered;
-  }, [products, filters]);
 
+    // Optimized sorting with stable sort and better type handling
+    if (filtered.length > 1) {
+      filtered = [...filtered].sort((a, b) => {
+        const aValue = a[filters.sortField];
+        const bValue = b[filters.sortField];
+
+        // Handle different data types properly
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          const comparison = aValue
+            .toLowerCase()
+            .localeCompare(bValue.toLowerCase());
+          return filters.sortDirection === "asc" ? comparison : -comparison;
+        }
+
+        // Handle numeric values
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return filters.sortDirection === "asc"
+            ? aValue - bValue
+            : bValue - aValue;
+        }
+
+        // Handle dates
+        if (aValue instanceof Date && bValue instanceof Date) {
+          return filters.sortDirection === "asc"
+            ? aValue.getTime() - bValue.getTime()
+            : bValue.getTime() - aValue.getTime();
+        }
+
+        // Fallback for other types
+        if (aValue < bValue) return filters.sortDirection === "asc" ? -1 : 1;
+        if (aValue > bValue) return filters.sortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [
+    products,
+    searchTerms,
+    filters.category,
+    filters.sortField,
+    filters.sortDirection,
+  ]);
+
+  // Update ref when filtered products change
+  useEffect(() => {
+    filteredProductsRef.current = filteredProducts;
+  }, [filteredProducts]);
+
+  // Optimized pagination with proper bounds checking
   const paginatedProducts = useMemo(() => {
-    return filteredProducts.slice(0, showCount);
+    const startIndex = 0;
+    const endIndex = Math.min(showCount, filteredProducts.length);
+    return filteredProducts.slice(startIndex, endIndex);
   }, [filteredProducts, showCount]);
 
-  const loadMore = useCallback(() => {
-    if (isLoading) return;
+  // Debounced scroll handler to improve performance
+  const scrollTimeoutRef = useRef<number>(null);
 
-    setIsLoading(true);
-    // Simulate API delay
-    setTimeout(() => {
-      setShowCount((prev) => Math.min(prev + 5, filteredProducts.length));
-      setIsLoading(false);
-    }, 300);
-  }, [isLoading, filteredProducts.length]);
-
-  // Auto-load more when reaching bottom
   const handleScroll = useCallback(() => {
-    if (isLoading || showCount >= filteredProducts.length) return;
-
-    const scrollTop = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-
-    // Load more when user is near bottom (within 100px)
-    if (scrollTop + windowHeight >= documentHeight - 100) {
-      loadMore();
+    if (scrollTimeoutRef.current) {
+      window.clearTimeout(scrollTimeoutRef.current);
     }
-  }, [isLoading, showCount, filteredProducts.length, loadMore]);
 
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      if (
+        isLoadingRef.current ||
+        showCountRef.current >= filteredProductsRef.current.length
+      ) {
+        return;
+      }
+
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= documentHeight - SCROLL_THRESHOLD) {
+        loadMore();
+      }
+    }, 50); // Small debounce for better performance
+  }, []);
+
+  // Cleanup scroll timeout on unmount
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      if (scrollTimeoutRef.current) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Optimized load more function
+  const loadMore = useCallback(() => {
+    if (isLoadingRef.current) return;
+
+    isLoadingRef.current = true;
+    setIsLoading(true);
+
+    // Simulate API delay
+    const timeoutId = window.setTimeout(() => {
+      setShowCount((prev) => {
+        const newCount = Math.min(
+          prev + ITEMS_PER_PAGE,
+          filteredProductsRef.current.length
+        );
+        showCountRef.current = newCount;
+        return newCount;
+      });
+      setIsLoading(false);
+      isLoadingRef.current = false;
+    }, API_DELAY);
+
+    // Cleanup timeout if component unmounts
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  // Add scroll event listener with proper cleanup
+  useEffect(() => {
+    const throttledHandleScroll = () => {
+      if (scrollTimeoutRef.current) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+      scrollTimeoutRef.current = window.setTimeout(handleScroll, 16); // ~60fps throttling
+    };
+
+    window.addEventListener("scroll", throttledHandleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", throttledHandleScroll);
+      if (scrollTimeoutRef.current) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, [handleScroll]);
 
+  // Optimized selection functions
   const toggleSelectProduct = useCallback((productId: string) => {
-    setSelectedProducts((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+    setSelectedProducts((prev) => {
+      const isSelected = prev.includes(productId);
+      if (isSelected) {
+        return prev.filter((id) => id !== productId);
+      }
+      return [...prev, productId];
+    });
   }, []);
 
   const selectAllProducts = useCallback(() => {
@@ -106,6 +224,7 @@ export const useProductManager = () => {
     setSelectedProducts([]);
   }, []);
 
+  // Optimized delete functions with proper state updates
   const deleteSelectedProducts = useCallback(() => {
     if (selectedProducts.length === 0) {
       toast.error("No products selected to delete");
@@ -119,10 +238,12 @@ export const useProductManager = () => {
     toast.success(`${selectedProducts.length} products deleted successfully`);
   }, [selectedProducts]);
 
+  // Reset pagination when filters change
   const updateFilters = useCallback((newFilters: Partial<ProductFilters>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
     setCurrentPage(1);
-    setShowCount(5); // Reset to 5 items
+    setShowCount(ITEMS_PER_PAGE);
+    showCountRef.current = ITEMS_PER_PAGE;
   }, []);
 
   const updateSort = useCallback(
@@ -136,13 +257,23 @@ export const useProductManager = () => {
     []
   );
 
-  // CRUD Operations
+  // CRUD Operations with proper error handling
   const addProduct = useCallback((newProduct: Product) => {
+    if (!newProduct.id || !newProduct.name) {
+      toast.error("Invalid product data");
+      return;
+    }
+
     setProducts((prev) => [newProduct, ...prev]);
     toast.success("Product added successfully");
   }, []);
 
   const updateProduct = useCallback((updatedProduct: Product) => {
+    if (!updatedProduct.id) {
+      toast.error("Invalid product ID");
+      return;
+    }
+
     setProducts((prev) =>
       prev.map((product) =>
         product.id === updatedProduct.id ? updatedProduct : product
@@ -152,6 +283,11 @@ export const useProductManager = () => {
   }, []);
 
   const deleteProduct = useCallback((productToDelete: Product) => {
+    if (!productToDelete.id) {
+      toast.error("Invalid product ID");
+      return;
+    }
+
     setProducts((prev) =>
       prev.filter((product) => product.id !== productToDelete.id)
     );
@@ -176,26 +312,49 @@ export const useProductManager = () => {
     toast.success(`${productIds.length} products deleted successfully`);
   }, []);
 
-  return {
-    products: paginatedProducts,
-    filteredProducts,
-    selectedProducts,
-    filters,
-    currentPage,
-    showCount,
-    totalProducts: filteredProducts.length,
-    hasMore: paginatedProducts.length < filteredProducts.length,
-    isLoading,
-    toggleSelectProduct,
-    selectAllProducts,
-    deselectAllProducts,
-    deleteSelectedProducts,
-    updateFilters,
-    updateSort,
-    loadMore,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-    deleteMultipleProducts,
-  };
+  // Memoized return object to prevent unnecessary re-renders
+  return useMemo(
+    () => ({
+      products: paginatedProducts,
+      filteredProducts,
+      selectedProducts,
+      filters,
+      currentPage,
+      showCount,
+      totalProducts: filteredProducts.length,
+      hasMore: paginatedProducts.length < filteredProducts.length,
+      isLoading,
+      toggleSelectProduct,
+      selectAllProducts,
+      deselectAllProducts,
+      deleteSelectedProducts,
+      updateFilters,
+      updateSort,
+      loadMore,
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      deleteMultipleProducts,
+    }),
+    [
+      paginatedProducts,
+      filteredProducts,
+      selectedProducts,
+      filters,
+      currentPage,
+      showCount,
+      isLoading,
+      toggleSelectProduct,
+      selectAllProducts,
+      deselectAllProducts,
+      deleteSelectedProducts,
+      updateFilters,
+      updateSort,
+      loadMore,
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      deleteMultipleProducts,
+    ]
+  );
 };

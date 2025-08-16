@@ -12,6 +12,8 @@ interface ProductFiltersProps {
   onUpdateSort: (field: SortField, direction: SortDirection) => void;
   selectedCount: number;
   totalCount: number;
+  filteredCount: number;
+  displayedCount: number;
   onDeleteSelected: () => void;
   onDeselectAll: () => void;
 }
@@ -22,6 +24,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   onUpdateSort,
   selectedCount,
   totalCount,
+  filteredCount,
+  displayedCount,
   onDeleteSelected,
   onDeselectAll,
 }) => {
@@ -110,9 +114,6 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       {/* Main controls: Search + Toggle Advanced */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="w-full md:max-w-xl">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Search Products
-          </label>
           <div className="relative">
             <svg
               className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
@@ -131,7 +132,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               type="text"
               value={searchText}
               onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder="Name, description, or tags..."
+              placeholder="Search by Name, description, or tags..."
               className="input pl-9"
             />
             {searchText && (
@@ -152,7 +153,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             className="btn btn-secondary"
           >
             <svg
-              className="w-4 h-4 mr-2"
+              className="w-4 h-4 "
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -164,7 +165,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h10a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 7a1 1 0 011-1h6a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"
               />
             </svg>
-            {showAdvanced ? "Hide Filters" : "Advanced Filters"}
+            {/* {showAdvanced ? "Hide Filters" : "Advanced Filters"} */}
           </button>
         </div>
       </div>
@@ -306,24 +307,39 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       {/* Results Summary */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="flex items-center justify-between text-sm text-gray-600">
-          <span>
-            Showing {totalCount} products
-            {filters.search && (
-              <span className="ml-2 text-blue-600">
-                for query "{filters.search}"
-              </span>
+          <div className="flex flex-col space-y-1">
+            <span>
+              Showing{" "}
+              <span className="font-medium text-gray-900">
+                {displayedCount}
+              </span>{" "}
+              of{" "}
+              <span className="font-medium text-gray-900">{filteredCount}</span>{" "}
+              filtered products
+              {filteredCount !== totalCount && (
+                <span className="ml-2 text-gray-500">
+                  (from {totalCount} total)
+                </span>
+              )}
+            </span>
+            {(filters.search || filters.category !== "All") && (
+              <div className="text-xs text-blue-600">
+                {filters.search && (
+                  <span className="mr-3">🔍 Search: "{filters.search}"</span>
+                )}
+                {filters.category !== "All" && (
+                  <span>📂 Category: "{filters.category}"</span>
+                )}
+              </div>
             )}
-            {filters.category !== "All" && (
-              <span className="ml-2 text-blue-600">
-                in category "{filters.category}"
-              </span>
-            )}
-          </span>
-          <span>
-            Sorted by{" "}
-            {sortFields.find((f) => f.value === filters.sortField)?.label} (
-            {filters.sortDirection === "asc" ? "A-Z" : "Z-A"})
-          </span>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-500 mb-1">Sorting</div>
+            <span>
+              {sortFields.find((f) => f.value === filters.sortField)?.label} (
+              {filters.sortDirection === "asc" ? "A-Z" : "Z-A"})
+            </span>
+          </div>
         </div>
       </div>
     </div>

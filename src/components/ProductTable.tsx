@@ -1,6 +1,8 @@
 import React, { memo, useMemo } from "react";
 import type { Product } from "../types/Product";
 import placeholderImage from "../assets/placeholder-image.svg";
+import { SettingsIcon } from "lucide-react";
+// const placeholderImage = "https://via.placeholder.com/150";
 
 interface ProductTableProps {
   products: Product[];
@@ -56,7 +58,7 @@ const TableComponent: React.FC<ProductTableProps> = ({
       <div className="card-header">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Product List
+            Products
           </h3>
           <button onClick={onAddProduct} className="btn btn-primary">
             <svg
@@ -72,7 +74,7 @@ const TableComponent: React.FC<ProductTableProps> = ({
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
-            Add Product
+            Add
           </button>
         </div>
       </div>
@@ -85,18 +87,19 @@ const TableComponent: React.FC<ProductTableProps> = ({
             <table className="min-w-full">
               <thead>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700"></th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 sticky left-0 z-20">
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      ref={(input) => {
-                        if (input) input.indeterminate = someSelected;
-                      }}
-                      onChange={allSelected ? onDeselectAll : onSelectAll}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 mr-2"
-                    />
-                    Actions
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 sticky left-0 z-20 flex items-center">
+                    {selectedProducts.length > 0 && (
+                      <input
+                        type="checkbox"
+                        checked={allSelected}
+                        ref={(input) => {
+                          if (input) input.indeterminate = someSelected;
+                        }}
+                        onChange={allSelected ? onDeselectAll : onSelectAll}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 mr-2"
+                      />
+                    )}
+                    <SettingsIcon className="size-5" />
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
                     Product
@@ -131,9 +134,8 @@ const TableComponent: React.FC<ProductTableProps> = ({
                   key={product.id}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap"></td>
-                  <td className="px-6 py-4 whitespace-nowrap sticky left-0 bg-white dark:bg-slate-900 z-10">
-                    <div className="flex space-x-2">
+                  <td className="px-6 py-4 whitespace-nowrap sticky left-0 bg-white dark:bg-slate-900 z-10 shadow-sm!">
+                    <div className="flex space-x-2 ">
                       <input
                         type="checkbox"
                         checked={selectedSet.has(product.id)}

@@ -1,7 +1,6 @@
 import React, {
   createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -37,7 +36,9 @@ const applyThemeClass = (theme: Theme) => {
   root.setAttribute("data-theme", theme);
   try {
     (root as HTMLElement).style.colorScheme = theme;
-  } catch {}
+  } catch {
+    console.error("Error applying theme class");
+  }
 };
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -64,7 +65,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     applyThemeClass(theme);
     try {
       localStorage.setItem(STORAGE_KEY, theme);
-    } catch {}
+    } catch {
+      console.error("Error applying theme class");
+    }
   }, [theme]);
 
   useEffect(() => {
@@ -89,9 +92,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export const useThemeContext = (): ThemeContextValue => {
-  const ctx = useContext(ThemeContext);
-  if (!ctx)
-    throw new Error("useThemeContext must be used within ThemeProvider");
-  return ctx;
-};
+// Export context for internal use
+export { ThemeContext };
+export type { Theme, ThemeContextValue };
