@@ -5,6 +5,7 @@ import type {
   SortDirection,
 } from "../types/Product";
 import { categories, sortFields } from "../data/mockProducts";
+import { Search, Filter, X, Trash2 } from "lucide-react";
 
 interface ProductFiltersProps {
   filters: ProductFiltersType;
@@ -110,24 +111,12 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   }, [filters, handleCategoryChange, handleSearchChange, handleSortChange]);
 
   return (
-    <div className="card p-6 mb-6">
+    <div className="card p-6 mb-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700">
       {/* Main controls: Search + Toggle Advanced */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="w-full md:max-w-xl">
           <div className="relative">
-            <svg
-              className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
-              />
-            </svg>
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchText}
@@ -141,7 +130,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 onClick={() => handleSearchChange("")}
                 className="absolute right-1 top-1/2 -translate-y-1/2 btn btn-secondary px-2 py-1 text-xs"
               >
-                Clear
+                <X className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -152,20 +141,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             onClick={() => setShowAdvanced((v) => !v)}
             className="btn btn-secondary"
           >
-            <svg
-              className="w-4 h-4 "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h10a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 7a1 1 0 011-1h6a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"
-              />
-            </svg>
-            {/* {showAdvanced ? "Hide Filters" : "Advanced Filters"} */}
+            <Filter className="w-4 h-4" />
+            {showAdvanced ? "Hide Filters" : "Advanced Filters"}
           </button>
         </div>
       </div>
@@ -183,9 +160,9 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 <button
                   type="button"
                   onClick={item.onClear}
-                  className="ml-2 text-blue-600 hover:text-blue-800"
+                  className="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                 >
-                  ×
+                  <X className="w-3 h-3" />
                 </button>
               </span>
             ))}
@@ -197,7 +174,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               handleCategoryChange("All");
               handleSortChange("name", "asc");
             }}
-            className="text-sm text-gray-600 hover:text-gray-800 underline"
+            className="text-sm text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200 underline"
           >
             Reset all
           </button>
@@ -209,7 +186,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="mt-4 overflow-x-auto">
           <div className="flex items-end gap-4 min-w-max pb-1">
             <div className="w-56">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                 Category
               </label>
               <select
@@ -226,7 +203,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             </div>
 
             <div className="w-56">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                 Sort By
               </label>
               <select
@@ -248,7 +225,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             </div>
 
             <div className="w-56">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                 Sort Direction
               </label>
               <select
@@ -271,33 +248,21 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
 
       {/* Selected Actions */}
       {selectedCount > 0 && (
-        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-blue-900">
+              <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
                 {selectedCount} products selected
               </span>
               <button
                 onClick={handleDeselectAll}
-                className="text-sm text-blue-600 hover:text-blue-800 underline"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
               >
                 Deselect All
               </button>
             </div>
             <button onClick={handleDeleteSelected} className="btn btn-danger">
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
+              <Trash2 className="w-4 h-4 mr-2" />
               Delete {selectedCount} Product{selectedCount > 1 ? "s" : ""}
             </button>
           </div>
@@ -305,25 +270,27 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       )}
 
       {/* Results Summary */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center justify-between text-sm text-gray-600">
+      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-slate-400">
           <div className="flex flex-col space-y-1">
             <span>
               Showing{" "}
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-gray-900 dark:text-gray-100">
                 {displayedCount}
               </span>{" "}
               of{" "}
-              <span className="font-medium text-gray-900">{filteredCount}</span>{" "}
+              <span className="font-medium text-gray-900 dark:text-gray-100">
+                {filteredCount}
+              </span>{" "}
               filtered products
               {filteredCount !== totalCount && (
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-500 dark:text-slate-500">
                   (from {totalCount} total)
                 </span>
               )}
             </span>
             {(filters.search || filters.category !== "All") && (
-              <div className="text-xs text-blue-600">
+              <div className="text-xs text-blue-600 dark:text-blue-400">
                 {filters.search && (
                   <span className="mr-3">🔍 Search: "{filters.search}"</span>
                 )}
@@ -334,7 +301,9 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             )}
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-500 mb-1">Sorting</div>
+            <div className="text-xs text-gray-500 dark:text-slate-500 mb-1">
+              Sorting
+            </div>
             <span>
               {sortFields.find((f) => f.value === filters.sortField)?.label} (
               {filters.sortDirection === "asc" ? "A-Z" : "Z-A"})

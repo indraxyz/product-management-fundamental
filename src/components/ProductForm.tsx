@@ -161,10 +161,10 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
 
         <div className="fixed inset-y-0 right-0 pl-10 max-w-full flex">
           <div className="w-screen max-w-xl">
-            <div className="h-full flex flex-col bg-white shadow-xl">
-              <div className="px-6 py-6 bg-gray-50">
+            <div className="h-full flex flex-col bg-white dark:bg-slate-900 shadow-xl">
+              <div className="px-6 py-6 bg-gray-50 dark:bg-slate-800">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-medium text-gray-900">
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     {mode === "add" ? "Add New Product" : "Edit Product"}
                   </h2>
                   <button
@@ -195,12 +195,12 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                   className="px-6 py-6 space-y-6"
                 >
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Basic Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Product Name *
                         </label>
                         <input
@@ -212,14 +212,14 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                           placeholder="Enter product name"
                         />
                         {errors.name && (
-                          <p className="mt-1 text-sm text-red-600">
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                             {errors.name.message}
                           </p>
                         )}
                       </div>
 
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Description *
                         </label>
                         <textarea
@@ -231,14 +231,14 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                           placeholder="Enter product description"
                         />
                         {errors.description && (
-                          <p className="mt-1 text-sm text-red-600">
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                             {errors.description.message}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Category *
                         </label>
                         <select
@@ -254,7 +254,7 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                           ))}
                         </select>
                         {errors.category && (
-                          <p className="mt-1 text-sm text-red-600">
+                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                             {errors.category.message}
                           </p>
                         )}
@@ -263,12 +263,12 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Price & Stock
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                           Price (USD) *
                         </label>
                         <input

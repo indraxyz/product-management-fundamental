@@ -37,14 +37,14 @@ const ProductImage: React.FC<ProductImageProps> = ({ src, alt, index }) => {
   return (
     <div className="relative group">
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-100 rounded-lg flex items-center justify-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-blue-600"></div>
+        <div className="absolute inset-0 bg-gray-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 dark:border-slate-600 border-t-blue-600 dark:border-t-blue-400"></div>
         </div>
       )}
       <img
         src={imageSrc}
         alt={alt}
-        className={`w-full h-64 object-cover rounded-lg border border-gray-200 shadow-md transition-all duration-300 ${
+        className={`w-full h-64 object-cover rounded-lg border border-gray-200 dark:border-slate-600 shadow-md transition-all duration-300 ${
           isLoading ? "opacity-0" : "opacity-100 hover:shadow-lg"
         }`}
         onLoad={handleLoad}
@@ -109,15 +109,15 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
         {/* Drawer panel */}
         <div className="fixed inset-y-0 right-0 pl-10 max-w-full flex">
           <div className="w-screen max-w-3xl">
-            <div className="h-full flex flex-col bg-white shadow-xl">
+            <div className="h-full flex flex-col bg-white dark:bg-slate-900 shadow-xl">
               {/* Header */}
-              <div className="px-6 py-6 bg-gray-50 border-b border-gray-200">
+              <div className="px-6 py-6 bg-gray-50 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                       Product Details
                     </h2>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
                       Complete product information
                     </p>
                   </div>
@@ -178,7 +178,7 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
                 <div className="px-6 py-6 space-y-8">
                   {/* Product Images */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Product Images
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -193,10 +193,10 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
                         ))
                       ) : (
                         <div className="col-span-full">
-                          <div className="flex items-center justify-center h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+                          <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-slate-600">
                             <div className="text-center">
                               <svg
-                                className="mx-auto h-12 w-12 text-gray-400"
+                                className="mx-auto h-12 w-12 text-gray-400 dark:text-slate-500"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -208,7 +208,7 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
                                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                 />
                               </svg>
-                              <p className="mt-2 text-sm text-gray-500">
+                              <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
                                 No images available
                               </p>
                             </div>
@@ -220,29 +220,31 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
 
                   {/* Basic Information */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Basic Information
                     </h3>
-                    <div className="bg-blue-50 rounded-lg p-4 space-y-3">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 space-y-3">
                       <div>
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
                           Product Name:
                         </span>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                           {product.name}
                         </p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
                           Description:
                         </span>
-                        <p className="text-gray-700">{product.description}</p>
+                        <p className="text-gray-700 dark:text-slate-300">
+                          {product.description}
+                        </p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
                           Category:
                         </span>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
                           {product.category}
                         </span>
                       </div>
@@ -251,31 +253,31 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
 
                   {/* Price & Stock */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Price & Stock
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-green-50 rounded-lg p-4">
-                        <span className="text-sm font-medium text-green-900">
+                      <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                        <span className="text-sm font-medium text-green-900 dark:text-green-100">
                           Price:
                         </span>
-                        <p className="text-xl font-bold text-green-800">
+                        <p className="text-xl font-bold text-green-800 dark:text-green-300">
                           {formatPrice(product.price)}
                         </p>
                         {product.discount > 0 && (
-                          <p className="text-sm text-green-600">
+                          <p className="text-sm text-green-600 dark:text-green-400">
                             Discount: {product.discount}%
                           </p>
                         )}
                       </div>
-                      <div className="bg-orange-50 rounded-lg p-4">
-                        <span className="text-sm font-medium text-orange-900">
+                      <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
+                        <span className="text-sm font-medium text-orange-900 dark:text-orange-100">
                           Stock:
                         </span>
-                        <p className="text-xl font-bold text-orange-800">
+                        <p className="text-xl font-bold text-orange-800 dark:text-orange-300">
                           {product.stock} units
                         </p>
-                        <p className="text-sm text-orange-600">
+                        <p className="text-sm text-orange-600 dark:text-orange-400">
                           Weight: {product.weight}g
                         </p>
                       </div>
@@ -285,14 +287,14 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
                   {/* Tags */}
                   {product.tags && product.tags.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         Tags
                       </h3>
                       <div className="flex flex-wrap gap-2">
                         {product.tags.map((tag, index) => (
                           <span
                             key={index}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300"
                           >
                             {tag}
                           </span>
@@ -355,23 +357,23 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
 
                   {/* Date Information */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Date Information
                     </h3>
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 space-y-2">
                       <div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                           Created:
                         </span>
-                        <p className="text-gray-600">
+                        <p className="text-gray-600 dark:text-slate-400">
                           {formatDate(product.createdAt)}
                         </p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                           Last Updated:
                         </span>
-                        <p className="text-gray-600">
+                        <p className="text-gray-600 dark:text-slate-400">
                           {formatDate(product.updatedAt)}
                         </p>
                       </div>
@@ -380,44 +382,44 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
 
                   {/* Product Summary */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Product Summary
                     </h3>
-                    <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-blue-900 font-medium">
+                          <span className="text-blue-900 dark:text-blue-100 font-medium">
                             Total Variants:
                           </span>
-                          <p className="text-blue-800 font-semibold">
+                          <p className="text-blue-800 dark:text-blue-300 font-semibold">
                             {product.variants.length}
                           </p>
                         </div>
                         <div>
-                          <span className="text-blue-900 font-medium">
+                          <span className="text-blue-900 dark:text-blue-100 font-medium">
                             Total Images:
                           </span>
-                          <p className="text-blue-800 font-semibold">
+                          <p className="text-blue-800 dark:text-blue-300 font-semibold">
                             {product.imagesUrl.length}
                           </p>
                         </div>
                         <div>
-                          <span className="text-blue-900 font-medium">
+                          <span className="text-blue-900 dark:text-blue-100 font-medium">
                             Total Tags:
                           </span>
-                          <p className="text-blue-800 font-semibold">
+                          <p className="text-blue-800 dark:text-blue-300 font-semibold">
                             {product.tags.length}
                           </p>
                         </div>
                         <div>
-                          <span className="text-blue-900 font-medium">
+                          <span className="text-blue-900 dark:text-blue-100 font-medium">
                             Stock Status:
                           </span>
                           <p
                             className={`font-semibold ${
                               product.stock > 0
-                                ? "text-green-600"
-                                : "text-red-600"
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-red-600 dark:text-red-400"
                             }`}
                           >
                             {product.stock > 0 ? "Available" : "Out of Stock"}
@@ -430,10 +432,13 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
               </div>
 
               {/* Footer */}
-              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
                 <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-500">
-                    Product ID: <span className="font-mono">{product.id}</span>
+                  <div className="text-sm text-gray-500 dark:text-slate-400">
+                    Product ID:{" "}
+                    <span className="font-mono text-gray-700 dark:text-slate-300">
+                      {product.id}
+                    </span>
                   </div>
                   <div className="flex space-x-3">
                     <button onClick={onClose} className="btn btn-secondary">

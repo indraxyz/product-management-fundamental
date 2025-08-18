@@ -53,9 +53,9 @@ const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
         {/* Delete modal panel */}
         <div className="fixed inset-y-0 right-0 pl-10 max-w-full flex">
           <div className="w-screen max-w-2xl">
-            <div className="h-full flex flex-col bg-white shadow-xl">
+            <div className="h-full flex flex-col bg-white dark:bg-slate-900 shadow-xl">
               {/* Header */}
-              <div className="px-6 py-6 bg-red-50 border-b border-red-200">
+              <div className="px-6 py-6 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -74,10 +74,10 @@ const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <h2 className="text-lg font-semibold text-red-900">
+                      <h2 className="text-lg font-semibold text-red-900 dark:text-red-100">
                         Delete Multiple Products
                       </h2>
-                      <p className="text-sm text-red-600">
+                      <p className="text-sm text-red-600 dark:text-red-400">
                         Confirm deletion of {products.length} products
                       </p>
                     </div>
@@ -120,42 +120,50 @@ const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                    <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
                       Confirm Deletion of Multiple Products
                     </h3>
-                    <p className="mt-2 text-sm text-gray-600">
+                    <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
                       Are you sure you want to delete these {products.length}{" "}
                       products? This action cannot be undone.
                     </p>
                   </div>
 
                   {/* Summary Information */}
-                  <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">
+                  <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 mb-6">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
                       Summary of Products to be Deleted
                     </h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-600">Total Products:</span>
-                        <p className="font-medium text-gray-900">
+                        <span className="text-gray-600 dark:text-slate-400">
+                          Total Products:
+                        </span>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">
                           {products.length}
                         </p>
                       </div>
                       <div>
-                        <span className="text-gray-600">Total Value:</span>
-                        <p className="font-medium text-green-600">
+                        <span className="text-gray-600 dark:text-slate-400">
+                          Total Value:
+                        </span>
+                        <p className="font-medium text-green-600 dark:text-green-400">
                           {formatPrice(getTotalValue())}
                         </p>
                       </div>
                       <div>
-                        <span className="text-gray-600">Categories:</span>
-                        <p className="font-medium text-gray-900">
+                        <span className="text-gray-600 dark:text-slate-400">
+                          Categories:
+                        </span>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">
                           {getCategories()}
                         </p>
                       </div>
                       <div>
-                        <span className="text-gray-600">Total Stock:</span>
-                        <p className="font-medium text-blue-600">
+                        <span className="text-gray-600 dark:text-slate-400">
+                          Total Stock:
+                        </span>
+                        <p className="font-medium text-blue-600 dark:text-blue-400">
                           {products.reduce(
                             (total, product) => total + product.stock,
                             0
@@ -168,14 +176,14 @@ const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
 
                   {/* Products List */}
                   <div className="mb-6">
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
                       Product List ({products.length})
                     </h4>
                     <div className="max-h-64 overflow-y-auto space-y-2">
                       {products.map((product) => (
                         <div
                           key={product.id}
-                          className="flex items-center space-x-3 p-3 bg-white border border-gray-200 rounded-lg"
+                          className="flex items-center space-x-3 p-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg"
                         >
                           <div className="flex-shrink-0">
                             {product.imagesUrl &&
@@ -183,14 +191,14 @@ const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
                               <img
                                 src={product.imagesUrl[0]}
                                 alt={product.name}
-                                className="w-10 h-10 object-cover rounded border border-gray-200"
+                                className="w-10 h-10 object-cover rounded border border-gray-200 dark:border-slate-600"
                                 loading="lazy"
                                 onError={(e) => {
                                   e.currentTarget.src = placeholderImage;
                                 }}
                               />
                             ) : (
-                              <div className="w-10 h-10 bg-gray-100 rounded border border-gray-200 flex items-center justify-center">
+                              <div className="w-10 h-10 bg-gray-100 dark:bg-slate-700 rounded border border-gray-200 dark:border-slate-600 flex items-center justify-center">
                                 <svg
                                   className="w-5 h-5 text-gray-400"
                                   fill="none"
@@ -208,23 +216,23 @@ const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                               {product.name}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-slate-400">
                               {product.category} • ID: {product.id}
                             </p>
                             <div className="flex items-center space-x-2 mt-1">
-                              <span className="text-xs text-gray-600">
+                              <span className="text-xs text-gray-600 dark:text-slate-300">
                                 Stock: {product.stock}
                               </span>
-                              <span className="text-xs text-gray-600">
+                              <span className="text-xs text-gray-600 dark:text-slate-300">
                                 Price: {formatPrice(product.price)}
                               </span>
                             </div>
                           </div>
                           <div className="flex-shrink-0">
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300">
                               Will be deleted
                             </span>
                           </div>
@@ -236,7 +244,7 @@ const DeleteMultipleModalComponent: React.FC<DeleteMultipleModalProps> = ({
               </div>
 
               {/* Footer */}
-              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
                 <div className="flex justify-end space-x-3">
                   <button onClick={onClose} className="btn btn-secondary">
                     Cancel

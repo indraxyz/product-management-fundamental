@@ -40,9 +40,9 @@ const DeleteModalComponent: React.FC<DeleteModalProps> = ({
         {/* Delete modal panel */}
         <div className="fixed inset-y-0 right-0 pl-10 max-w-full flex">
           <div className="w-screen max-w-md">
-            <div className="h-full flex flex-col bg-white shadow-xl">
+            <div className="h-full flex flex-col bg-white dark:bg-slate-900 shadow-xl">
               {/* Header */}
-              <div className="px-6 py-6 bg-red-50 border-b border-red-200">
+              <div className="px-6 py-6 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -61,10 +61,10 @@ const DeleteModalComponent: React.FC<DeleteModalProps> = ({
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <h2 className="text-lg font-semibold text-red-900">
+                      <h2 className="text-lg font-semibold text-red-900 dark:text-red-100">
                         Delete Product
                       </h2>
-                      <p className="text-sm text-red-600">
+                      <p className="text-sm text-red-600 dark:text-red-400">
                         Confirm product deletion
                       </p>
                     </div>
@@ -107,23 +107,23 @@ const DeleteModalComponent: React.FC<DeleteModalProps> = ({
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                    <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
                       Delete Confirmation
                     </h3>
-                    <p className="mt-2 text-sm text-gray-600">
+                    <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
                       Are you sure you want to delete this product? This action
                       cannot be undone.
                     </p>
                   </div>
 
                   {/* Product Info */}
-                  <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                  <div className="mt-6 bg-gray-50 dark:bg-slate-800 rounded-lg p-4">
                     <div className="flex items-center space-x-4">
                       {product.imagesUrl && product.imagesUrl.length > 0 && (
                         <img
                           src={product.imagesUrl[0]}
                           alt={product.name}
-                          className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                          className="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-slate-600"
                           onError={(e) => {
                             e.currentTarget.src =
                               "https://via.placeholder.com/64x64?text=Image";
@@ -131,20 +131,20 @@ const DeleteModalComponent: React.FC<DeleteModalProps> = ({
                         />
                       )}
                       <div className="flex-1">
-                        <h4 className="text-sm font-medium text-gray-900">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {product.name}
                         </h4>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-slate-400">
                           {product.category}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-slate-400">
                           ID: {product.id}
                         </p>
                         <div className="mt-1 flex items-center space-x-4 text-sm">
-                          <span className="text-gray-600">
+                          <span className="text-gray-600 dark:text-slate-300">
                             Stock: {product.stock}
                           </span>
-                          <span className="text-gray-600">
+                          <span className="text-gray-600 dark:text-slate-300">
                             Price: {formatPrice(product.price)}
                           </span>
                         </div>
@@ -155,7 +155,7 @@ const DeleteModalComponent: React.FC<DeleteModalProps> = ({
               </div>
 
               {/* Footer */}
-              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
                 <div className="flex justify-end space-x-3">
                   <button onClick={onClose} className="btn btn-secondary">
                     Cancel
