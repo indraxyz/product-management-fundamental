@@ -1,0 +1,23 @@
+import type { Product, ProductFilters, SortField, SortDirection } from "@/types/Product";
+export declare const useProductManager: () => {
+    products: Product[];
+    filteredProducts: Product[];
+    selectedProducts: string[];
+    filters: ProductFilters;
+    currentPage: number;
+    showCount: number;
+    totalProducts: number;
+    hasMore: boolean;
+    isLoading: boolean;
+    toggleSelectProduct: (productId: string) => void;
+    selectAllProducts: () => void;
+    deselectAllProducts: () => void;
+    deleteSelectedProducts: () => void;
+    updateFilters: (newFilters: Partial<ProductFilters>) => void;
+    updateSort: (field: SortField, direction: SortDirection) => void;
+    loadMore: () => (() => void) | undefined;
+    addProduct: (newProduct: Product) => void;
+    updateProduct: (updatedProduct: Product) => void;
+    deleteProduct: (productToDelete: Product) => void;
+    deleteMultipleProducts: (productIds: string[]) => void;
+};
