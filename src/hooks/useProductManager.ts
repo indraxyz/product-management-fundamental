@@ -1,11 +1,19 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef,
+  useOptimistic,
+  useTransition,
+} from "react";
 import type {
   Product,
   ProductFilters,
   SortField,
   SortDirection,
-} from "../types/Product";
-import { mockProducts } from "../data/mockProducts";
+} from "@/types/Product";
+import { mockProducts } from "@/data/mockProducts";
 import toast from "react-hot-toast";
 
 // Constants for better maintainability
@@ -15,6 +23,11 @@ const API_DELAY = 300;
 
 export const useProductManager = () => {
   const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [isPending, startTransition] = useTransition();
+  const [optimisticProducts, addOptimisticProduct] = useOptimistic(
+    products,
+    (state, newProduct: Product) => [newProduct, ...state]
+  );
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [filters, setFilters] = useState<ProductFilters>({
     search: "",
@@ -39,11 +52,11 @@ export const useProductManager = () => {
 
   // Optimized filtering with early returns and better performance
   const filteredProducts = useMemo(() => {
-    let filtered = products;
+    let filtered = optimisticProducts;
 
     // Early return if no filters applied
     if (!searchTerms && filters.category === "All") {
-      return products;
+      return optimisticProducts;
     }
 
     // Apply search filter only if search terms exist
@@ -108,7 +121,7 @@ export const useProductManager = () => {
 
     return filtered;
   }, [
-    products,
+    optimisticProducts,
     searchTerms,
     filters.category,
     filters.sortField,
@@ -129,38 +142,7 @@ export const useProductManager = () => {
 
   // Debounced scroll handler to improve performance
   const scrollTimeoutRef = useRef<number>(null);
-
-  const handleScroll = useCallback(() => {
-    if (scrollTimeoutRef.current) {
-      window.clearTimeout(scrollTimeoutRef.current);
-    }
-
-    scrollTimeoutRef.current = window.setTimeout(() => {
-      if (
-        isLoadingRef.current ||
-        showCountRef.current >= filteredProductsRef.current.length
-      ) {
-        return;
-      }
-
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
-      if (scrollTop + windowHeight >= documentHeight - SCROLL_THRESHOLD) {
-        loadMore();
-      }
-    }, 50); // Small debounce for better performance
-  }, []);
-
-  // Cleanup scroll timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, []);
+  const loadMoreRef = useRef<() => void>(() => {});
 
   // Optimized load more function
   const loadMore = useCallback(() => {
@@ -185,6 +167,43 @@ export const useProductManager = () => {
 
     // Cleanup timeout if component unmounts
     return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  // Update loadMore ref whenever loadMore changes
+  useEffect(() => {
+    loadMoreRef.current = loadMore;
+  }, [loadMore]);
+
+  const handleScroll = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      window.clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      if (
+        isLoadingRef.current ||
+        showCountRef.current >= filteredProductsRef.current.length
+      ) {
+        return;
+      }
+
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= documentHeight - SCROLL_THRESHOLD) {
+        loadMoreRef.current();
+      }
+    }, 50); // Small debounce for better performance
+  }, []);
+
+  // Cleanup scroll timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Add scroll event listener with proper cleanup
@@ -257,16 +276,22 @@ export const useProductManager = () => {
     []
   );
 
-  // CRUD Operations with proper error handling
-  const addProduct = useCallback((newProduct: Product) => {
-    if (!newProduct.id || !newProduct.name) {
-      toast.error("Invalid product data");
-      return;
-    }
+  // CRUD Operations with proper error handling and optimistic updates
+  const addProduct = useCallback(
+    (newProduct: Product) => {
+      if (!newProduct.id || !newProduct.name) {
+        toast.error("Invalid product data");
+        return;
+      }
 
-    setProducts((prev) => [newProduct, ...prev]);
-    toast.success("Product added successfully");
-  }, []);
+      startTransition(() => {
+        addOptimisticProduct(newProduct);
+        setProducts((prev) => [newProduct, ...prev]);
+        toast.success("Product added successfully");
+      });
+    },
+    [addOptimisticProduct]
+  );
 
   const updateProduct = useCallback((updatedProduct: Product) => {
     if (!updatedProduct.id) {
@@ -274,12 +299,14 @@ export const useProductManager = () => {
       return;
     }
 
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === updatedProduct.id ? updatedProduct : product
-      )
-    );
-    toast.success("Product updated successfully");
+    startTransition(() => {
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.id === updatedProduct.id ? updatedProduct : product
+        )
+      );
+      toast.success("Product updated successfully");
+    });
   }, []);
 
   const deleteProduct = useCallback((productToDelete: Product) => {
@@ -288,13 +315,15 @@ export const useProductManager = () => {
       return;
     }
 
-    setProducts((prev) =>
-      prev.filter((product) => product.id !== productToDelete.id)
-    );
-    setSelectedProducts((prev) =>
-      prev.filter((id) => id !== productToDelete.id)
-    );
-    toast.success("Product deleted successfully");
+    startTransition(() => {
+      setProducts((prev) =>
+        prev.filter((product) => product.id !== productToDelete.id)
+      );
+      setSelectedProducts((prev) =>
+        prev.filter((id) => id !== productToDelete.id)
+      );
+      toast.success("Product deleted successfully");
+    });
   }, []);
 
   const deleteMultipleProducts = useCallback((productIds: string[]) => {
@@ -303,13 +332,15 @@ export const useProductManager = () => {
       return;
     }
 
-    setProducts((prev) =>
-      prev.filter((product) => !productIds.includes(product.id))
-    );
-    setSelectedProducts((prev) =>
-      prev.filter((id) => !productIds.includes(id))
-    );
-    toast.success(`${productIds.length} products deleted successfully`);
+    startTransition(() => {
+      setProducts((prev) =>
+        prev.filter((product) => !productIds.includes(product.id))
+      );
+      setSelectedProducts((prev) =>
+        prev.filter((id) => !productIds.includes(id))
+      );
+      toast.success(`${productIds.length} products deleted successfully`);
+    });
   }, []);
 
   // Memoized return object to prevent unnecessary re-renders
@@ -323,7 +354,7 @@ export const useProductManager = () => {
       showCount,
       totalProducts: filteredProducts.length,
       hasMore: paginatedProducts.length < filteredProducts.length,
-      isLoading,
+      isLoading: isLoading || isPending,
       toggleSelectProduct,
       selectAllProducts,
       deselectAllProducts,
@@ -344,6 +375,7 @@ export const useProductManager = () => {
       currentPage,
       showCount,
       isLoading,
+      isPending,
       toggleSelectProduct,
       selectAllProducts,
       deselectAllProducts,

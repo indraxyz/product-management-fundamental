@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "react-router Docs": {
+      "url": "https://gitmcp.io/remix-run/react-router"
+    },
+    "vite Docs": {
+      "url": "https://gitmcp.io/vitejs/vite"
+    },
+    "tailwindcss Docs": {
+      "url": "https://gitmcp.io/tailwindlabs/tailwindcss"
+    },
+    "react Docs": {
+      "url": "https://gitmcp.io/facebook/react"
+    },
+    "cloudflare docs": {
+      "url": "https://docs.mcp.cloudflare.com/mcp"
+    }
+  }
+}

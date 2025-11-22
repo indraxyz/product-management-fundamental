@@ -81,22 +81,33 @@ const TableComponent: React.FC<ProductTableProps> = ({
         {/* Sticky header container */}
         <div className="sticky top-0 z-30 bg-gray-50 dark:bg-slate-900 shadow-sm">
           <div className="overflow-x-auto">
-            <table className="min-w-full">
+            <table className="min-w-full table-fixed">
+              <colgroup>
+                <col className="w-[180px]" />
+                <col className="w-[400px]" />
+                <col className="w-[120px]" />
+                <col className="w-[100px]" />
+                <col className="w-[100px]" />
+                <col className="w-[100px]" />
+                <col className="w-[150px]" />
+              </colgroup>
               <thead>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 sticky left-0 z-20 flex items-center">
-                    {selectedProducts.length > 0 && (
-                      <input
-                        type="checkbox"
-                        checked={allSelected}
-                        ref={(input) => {
-                          if (input) input.indeterminate = someSelected;
-                        }}
-                        onChange={allSelected ? onDeselectAll : onSelectAll}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 mr-2"
-                      />
-                    )}
-                    <Settings className="size-5" />
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 sticky left-0 z-20 shadow-[2px_0_8px_-2px_rgba(0,0,0,0.1)] dark:shadow-[2px_0_8px_-2px_rgba(0,0,0,0.3)]">
+                    <div className="flex items-center">
+                      {selectedProducts.length > 0 && (
+                        <input
+                          type="checkbox"
+                          checked={allSelected}
+                          ref={(input) => {
+                            if (input) input.indeterminate = someSelected;
+                          }}
+                          onChange={allSelected ? onDeselectAll : onSelectAll}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 mr-2"
+                        />
+                      )}
+                      <Settings className="size-5" />
+                    </div>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
                     Product
@@ -124,7 +135,16 @@ const TableComponent: React.FC<ProductTableProps> = ({
 
         {/* Table body with horizontal scroll */}
         <div className="overflow-x-auto">
-          <table className="min-w-full">
+          <table className="min-w-full table-fixed">
+            <colgroup>
+              <col className="w-[180px]" />
+              <col className="w-[300px]" />
+              <col className="w-[120px]" />
+              <col className="w-[100px]" />
+              <col className="w-[100px]" />
+              <col className="w-[100px]" />
+              <col className="w-[150px]" />
+            </colgroup>
             <tbody className="bg-white divide-y divide-gray-200 dark:bg-slate-900 dark:divide-slate-800">
               {products.map((product) => (
                 <tr

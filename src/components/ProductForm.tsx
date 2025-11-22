@@ -581,7 +581,7 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                 </form>
               </div>
 
-              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="flex-shrink-0 px-6 py-4 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
                 <div className="flex justify-end space-x-3">
                   <button
                     type="button"

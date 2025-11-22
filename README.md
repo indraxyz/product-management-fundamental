@@ -1,336 +1,198 @@
-# Products Management System
+# Product Management Application
 
-A modern, responsive web application for managing products with advanced filtering, sorting, and CRUD operations. Built with React, TypeScript, and Tailwind CSS.
+A modern, high-performance product management application built with React 19, React Router v7, Vite, and Tailwind CSS v4, optimized for Cloudflare Pages deployment.
 
-## 🚀 Features
+## 🚀 Tech Stack
 
-### Core Functionality
-
-- **Product Management**: Full CRUD operations (Create, Read, Update, Delete)
-- **Advanced Filtering**: Search by name, description, tags, and category
-- **Smart Sorting**: Sort by any field with ascending/descending options
-- **Bulk Operations**: Select and manage multiple products simultaneously
-- **Infinite Scroll**: Smooth pagination with auto-loading
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-
-### User Experience
-
-- **Dark/Light Theme**: Toggle between themes with system preference detection
-- **Real-time Search**: Debounced search with instant results
-- **Interactive UI**: Hover effects, smooth transitions, and loading states
-- **Accessibility**: ARIA labels, keyboard navigation, and screen reader support
-- **Performance**: Optimized rendering with React.memo and useMemo
-
-### Data Management
-
-- **Local Storage**: Theme preferences and user settings
-- **Mock Data**: Comprehensive sample data for testing
-- **Type Safety**: Full TypeScript implementation
-- **State Management**: Custom hooks for efficient state handling
-
-## 🛠️ Tech Stack
-
-### Frontend
-
-- **React 18** - Modern React with hooks and functional components
+- **React 19** - Latest React with concurrent features
+- **React Router v7** - Modern routing with data loaders
+- **Vite 7** - Next-generation frontend tooling
+- **Tailwind CSS v4** - Utility-first CSS framework
 - **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first CSS framework
-- **Vite** - Fast build tool and development server
+- **Zod** - Schema validation
+- **React Hook Form** - Performant forms
+- **Cloudflare Pages** - Edge deployment
 
-### Icons & UI
+## ✨ Features
 
-- **Lucide React** - Beautiful, consistent icon library
-- **Custom Components** - Reusable, accessible UI components
-- **Responsive Design** - Mobile-first approach
+- ⚡ **Optimized Performance** - Code splitting, lazy loading, and optimized builds
+- 🎨 **Modern UI** - Beautiful, responsive design with dark mode support
+- 🔄 **React 19 Features** - Uses `useTransition`, `useOptimistic` for better UX
+- 📦 **Code Splitting** - Route-based and component-based code splitting
+- 🛡️ **Type Safety** - Full TypeScript support with strict mode
+- 🚀 **Fast Development** - Hot module replacement and fast refresh
+- ☁️ **Cloudflare Optimized** - Configured for Cloudflare Pages deployment
 
-### Development Tools
+## 📦 Installation
 
-- **ESLint** - Code quality and consistency
-- **Prettier** - Code formatting
-- **Type Declarations** - Comprehensive type definitions for all file types
+```bash
+# Install dependencies
+pnpm install
+
+# Copy environment variables
+cp .env.example .env
+```
+
+## 🛠️ Development
+
+```bash
+# Start development server
+pnpm dev
+
+# Type check
+pnpm type-check
+
+# Lint code
+pnpm lint
+
+# Fix linting issues
+pnpm lint:fix
+
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+```
+
+## 🚀 Deployment
+
+### Cloudflare Pages
+
+The project is configured for Cloudflare Pages deployment with optimized settings:
+
+1. **Using Wrangler CLI:**
+   ```bash
+   # Deploy to production
+   pnpm deploy
+   
+   # Deploy to preview branch
+   pnpm deploy:preview
+   
+   # Create a new Pages project
+   pnpm pages:project:create
+   
+   # Test Pages Functions locally
+   pnpm pages:dev
+   ```
+
+2. **Using GitHub Actions:**
+   - Push to `main` branch
+   - GitHub Actions will automatically build and deploy
+   - Configure secrets in GitHub:
+     - `CLOUDFLARE_API_TOKEN`
+     - `CLOUDFLARE_ACCOUNT_ID`
+
+3. **Using Cloudflare Dashboard:**
+   - Connect your GitHub repository
+   - Set build command: `pnpm build`
+   - Set output directory: `dist`
+   - Framework preset: React
+   - Deploy!
+
+### Cloudflare Pages Functions
+
+The project includes a middleware function (`functions/_middleware.ts`) that adds security headers to all responses. This works alongside the static `_headers` file for comprehensive security coverage.
+
+### React Router v7 on Cloudflare Pages
+
+React Router v7 is fully configured for Cloudflare Pages:
+
+- **SPA Routing**: The `_redirects` file ensures all routes serve `index.html`, allowing React Router v7 to handle client-side routing
+- **Middleware**: Optimized to skip static assets and only process HTML responses
+- **Code Splitting**: Routes are lazy-loaded for optimal performance
+- **Error Handling**: Route-level error boundaries for graceful error handling
+
+See [CLOUDFLARE_REACT_ROUTER.md](./CLOUDFLARE_REACT_ROUTER.md) for detailed information about the React Router v7 + Cloudflare Pages setup.
 
 ## 📁 Project Structure
 
 ```
 src/
-├── components/          # React components
-│   ├── ProductTable.tsx        # Main product table with actions
-│   ├── ProductFilters.tsx      # Search, filter, and sort controls
-│   ├── ProductForm.tsx         # Add/edit product form
-│   ├── ProductDetail.tsx       # Product detail view
-│   ├── DeleteModal.tsx         # Single product deletion
-│   ├── DeleteMultipleModal.tsx # Bulk deletion confirmation
-│   └── ThemeToggle.tsx         # Theme switcher
+├── components/          # Reusable UI components
+├── routes/             # React Router route components
+│   ├── index.tsx       # Router configuration
+│   └── home.tsx        # Home page route
 ├── hooks/              # Custom React hooks
-│   ├── useProductManager.ts    # Product state and operations
-│   └── useTheme.ts            # Theme management
-├── context/            # React context providers
-│   └── ThemeContext.tsx       # Theme context and provider
+├── lib/                # Utility functions
+│   ├── env.ts          # Environment variables
+│   └── preload.ts      # Preload utilities
 ├── types/              # TypeScript type definitions
-│   ├── Product.ts             # Product interface and types
-│   ├── svg.d.ts              # SVG module declarations
-│   ├── css.d.ts              # CSS module declarations
-│   ├── images.d.ts           # Image file declarations
-│   ├── fonts.d.ts            # Font file declarations
-│   ├── data.d.ts             # Data file declarations
-│   ├── audio.d.ts            # Audio file declarations
-│   ├── video.d.ts            # Video file declarations
-│   ├── global.d.ts           # Global utility types
-│   ├── react.d.ts            # React extensions
-│   └── index.d.ts            # Type exports
-├── data/               # Mock data and constants
-│   └── mockProducts.ts       # Sample product data
+├── context/            # React context providers
 ├── styles/             # Global styles
-│   └── index.css             # Tailwind CSS and custom styles
 └── assets/             # Static assets
-    ├── placeholder-image.svg  # Default product image
-    └── react.svg             # React logo
 ```
 
-## 🚀 Getting Started
+## 🎯 Key Optimizations
 
-### Prerequisites
+### Performance
+- **Code Splitting**: Automatic route-based and manual chunk splitting
+- **Lazy Loading**: Components loaded on demand
+- **Optimistic Updates**: Using React 19's `useOptimistic`
+- **Transition Management**: Using `useTransition` for non-urgent updates
+- **Asset Optimization**: Optimized build output with proper chunking
 
-- Node.js 18+
-- npm, yarn, or pnpm
+### Developer Experience
+- **Path Aliases**: `@/` for `src/` directory
+- **TypeScript**: Strict mode with comprehensive type checking
+- **ESLint**: Code quality and consistency
+- **Hot Module Replacement**: Fast development feedback
+- **Environment Variables**: Type-safe environment configuration
 
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone <repository-url>
-   cd products-management
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   ```
-
-3. **Start development server**
-
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
-
-### Build for Production
-
-```bash
-npm run build
-# or
-yarn build
-# or
-pnpm build
-```
-
-## 🎯 Usage
-
-### Adding Products
-
-1. Click the "Add Product" button in the header
-2. Fill in product details (name, description, price, stock, etc.)
-3. Add product images and tags
-4. Click "Save Product"
-
-### Managing Products
-
-- **View Details**: Click the eye icon to see full product information
-- **Edit**: Click the edit icon to modify product details
-- **Delete**: Click the trash icon to remove products
-- **Bulk Actions**: Select multiple products for batch operations
-
-### Filtering & Search
-
-- **Search**: Type in the search bar to find products by name, description, or tags
-- **Category Filter**: Select specific categories to narrow results
-- **Sorting**: Choose sort field and direction for organized viewing
-
-### Theme Switching
-
-- Click the theme toggle button to switch between light and dark modes
-- Theme preference is automatically saved and restored
+### Cloudflare Optimizations
+- **Headers Configuration**: Security and caching headers
+- **Redirects**: SPA routing support
+- **Build Optimization**: Optimized for Cloudflare's edge network
+- **Asset Caching**: Long-term caching for static assets
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file based on `.env.example`:
 
 ```env
-VITE_API_URL=http://localhost:3000/api
-VITE_APP_NAME=Products Management
-VITE_APP_VERSION=1.0.0
-VITE_DEBUG=true
+VITE_APP_TITLE=Product Management
+VITE_API_URL=https://api.example.com
 ```
 
-### Customization
+### Path Aliases
 
-- **Colors**: Modify Tailwind CSS variables in `src/styles/index.css`
-- **Icons**: Replace Lucide React icons with custom SVGs
-- **Data**: Update mock data in `src/data/mockProducts.ts`
+The project uses path aliases for cleaner imports:
 
-## 📱 Responsive Design
+```typescript
+import { Component } from "@/components/Component";
+import { useHook } from "@/hooks/useHook";
+import type { Product } from "@/types/Product";
+```
 
-The application is fully responsive with breakpoints:
+## 📝 Scripts
 
-- **Mobile**: < 640px - Stacked layout, compact tables
-- **Tablet**: 640px - 1024px - Adaptive grid, medium spacing
-- **Desktop**: > 1024px - Full layout, optimal spacing
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm build:analyze` - Build with bundle analysis
+- `pnpm preview` - Preview production build
+- `pnpm lint` - Run ESLint
+- `pnpm lint:fix` - Fix ESLint issues
+- `pnpm type-check` - Type check without emitting
+- `pnpm clean` - Clean build artifacts
+- `pnpm deploy` - Build and deploy to Cloudflare
 
-## ♿ Accessibility
+## 🎨 Styling
 
-- **ARIA Labels**: Proper labeling for screen readers
-- **Keyboard Navigation**: Full keyboard support
-- **Color Contrast**: WCAG AA compliant color schemes
-- **Focus Management**: Clear focus indicators
-- **Semantic HTML**: Proper heading hierarchy and landmarks
-
-## 🧪 Testing
-
-### Manual Testing
-
-- Test all CRUD operations
-- Verify responsive behavior on different screen sizes
-- Check theme switching functionality
-- Test keyboard navigation
-- Verify accessibility features
-
-### Automated Testing (Future)
-
-- Unit tests with Jest and React Testing Library
-- Integration tests for user workflows
-- E2E tests with Playwright or Cypress
-
-## 🚀 Performance
-
-### Optimizations
-
-- **React.memo**: Prevents unnecessary re-renders
-- **useMemo**: Memoizes expensive calculations
-- **useCallback**: Prevents function recreation
-- **Lazy Loading**: Code splitting for better initial load
-- **Debounced Search**: Reduces API calls during typing
-
-### Metrics
-
-- **First Contentful Paint**: < 1.5s
-- **Largest Contentful Paint**: < 2.5s
-- **Cumulative Layout Shift**: < 0.1
+The project uses Tailwind CSS v4 with:
+- Custom component classes in `src/styles/index.css`
+- Dark mode support
+- Responsive design utilities
+- Custom animations and transitions
 
 ## 🔒 Security
 
-- **Input Validation**: Client-side validation for all forms
-- **XSS Prevention**: Sanitized user inputs
-- **CSRF Protection**: Ready for backend implementation
-- **Secure Headers**: Configured for production deployment
-
-## 📦 Deployment
-
-### Build
-
-```bash
-npm run build
-```
-
-### Deploy to Vercel
-
-```bash
-npm install -g vercel
-vercel --prod
-```
-
-### Deploy to Netlify
-
-```bash
-npm install -g netlify-cli
-netlify deploy --prod
-```
-
-### Docker (Future)
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-## 🤝 Contributing
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Code Standards
-
-- Follow TypeScript best practices
-- Use functional components with hooks
-- Implement proper error handling
-- Add comprehensive comments
-- Maintain accessibility standards
+- Content Security Policy headers
+- XSS protection
+- Secure cookie handling
+- Input validation with Zod
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **React Team** - For the amazing framework
-- **Tailwind CSS** - For the utility-first CSS approach
-- **Lucide** - For the beautiful icon library
-- **Vite** - For the fast build tool
-- **TypeScript** - For type safety
-
-## 📞 Support
-
-- **Issues**: Report bugs and feature requests on GitHub
-- **Discussions**: Join community discussions
-- **Documentation**: Check the docs folder for detailed guides
-
-## 🔮 Roadmap
-
-### Version 1.1
-
-- [ ] User authentication and authorization
-- [ ] Product categories management
-- [ ] Image upload and management
-- [ ] Export to CSV/Excel
-
-### Version 1.2
-
-- [ ] Advanced analytics dashboard
-- [ ] Product variants support
-- [ ] Inventory tracking
-- [ ] API integration
-
-### Version 1.3
-
-- [ ] Multi-language support
-- [ ] Advanced search filters
-- [ ] Product recommendations
-- [ ] Mobile app (React Native)
-
----
-
-**Made with ❤️ by the Products Management Team**
+MIT
