@@ -407,7 +407,7 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                       Images
                     </h3>
                     <div className="space-y-3">
@@ -439,9 +439,9 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                           {images.map((url, index) => (
                             <div
                               key={`${url}-${index}`}
-                              className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
+                              className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-800 rounded-md"
                             >
-                              <span className="text-sm text-gray-600 truncate flex-1">
+                              <span className="text-sm text-gray-600 dark:text-slate-400 truncate flex-1">
                                 {url}
                               </span>
                               <button
@@ -456,7 +456,7 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                                     shouldValidate: true,
                                   });
                                 }}
-                                className="ml-2 text-red-600 hover:text-red-800"
+                                className="ml-2 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                               >
                                 ×
                               </button>
@@ -465,7 +465,7 @@ const ProductFormComponent: React.FC<ProductFormProps> = ({
                         </div>
                       )}
                       {errors.imagesUrl && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                           Invalid image URL
                         </p>
                       )}

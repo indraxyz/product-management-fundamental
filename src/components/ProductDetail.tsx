@@ -306,45 +306,53 @@ const ProductDetailComponent: React.FC<ProductDetailProps> = ({
                   {/* Variants */}
                   {product.variants && product.variants.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         Product Variants
                       </h3>
                       <div className="space-y-3">
                         {product.variants.map((variant, index) => (
                           <div
                             key={variant.id}
-                            className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                            className="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-slate-700"
                           >
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="text-sm font-medium text-gray-900">
+                              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 Variant {index + 1}
                               </h4>
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
                                 ID: {variant.id}
                               </span>
                             </div>
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div>
-                                <span className="text-gray-600">Name:</span>
-                                <p className="font-medium">{variant.name}</p>
+                                <span className="text-gray-600 dark:text-slate-400">
+                                  Name:
+                                </span>
+                                <p className="font-medium text-gray-900 dark:text-gray-100">
+                                  {variant.name}
+                                </p>
                               </div>
                               <div>
-                                <span className="text-gray-600">Value:</span>
-                                <p className="font-medium">{variant.value}</p>
+                                <span className="text-gray-600 dark:text-slate-400">
+                                  Value:
+                                </span>
+                                <p className="font-medium text-gray-900 dark:text-gray-100">
+                                  {variant.value}
+                                </p>
                               </div>
                               <div>
-                                <span className="text-gray-600">
+                                <span className="text-gray-600 dark:text-slate-400">
                                   Price Modifier:
                                 </span>
-                                <p className="font-medium text-green-600">
+                                <p className="font-medium text-green-600 dark:text-green-400">
                                   {formatPrice(variant.priceModifier)}
                                 </p>
                               </div>
                               <div>
-                                <span className="text-gray-600">
+                                <span className="text-gray-600 dark:text-slate-400">
                                   Stock Modifier:
                                 </span>
-                                <p className="font-medium text-blue-600">
+                                <p className="font-medium text-blue-600 dark:text-blue-400">
                                   {variant.stockModifier} units
                                 </p>
                               </div>
