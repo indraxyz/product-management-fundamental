@@ -1,6 +1,6 @@
 # Product Management Application
 
-A modern, high-performance product management application built with React 19, React Router v7, Vite, and Tailwind CSS v4, optimized for Cloudflare Pages deployment.
+product management application built with React 19, React Router v7, Vite, and Tailwind CSS v4, optimized for Cloudflare Pages deployment.
 
 ## 🚀 Tech Stack
 

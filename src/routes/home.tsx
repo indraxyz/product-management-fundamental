@@ -1,15 +1,16 @@
-import { Suspense, useState, lazy, useTransition } from "react";
+import { useState, lazy, useTransition } from "react";
 import { useProductManager } from "@/hooks/useProductManager";
 import { ProductTable } from "@/components/ProductTable";
 import { ProductFilters } from "@/components/ProductFilters";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LoadingFallback } from "@/components/LoadingFallback";
 import type { Product } from "@/types/Product";
 
 const ProductDetail = lazy(() => import("@/components/ProductDetail"));
 const ProductForm = lazy(() => import("@/components/ProductForm"));
 const DeleteModal = lazy(() => import("@/components/DeleteModal"));
-const DeleteMultipleModal = lazy(() => import("@/components/DeleteMultipleModal"));
+const DeleteMultipleModal = lazy(
+  () => import("@/components/DeleteMultipleModal")
+);
 
 export function HomePage() {
   const [isPending, startTransition] = useTransition();
@@ -172,51 +173,42 @@ export function HomePage() {
       </div>
 
       {isDetailOpen && selectedProduct && (
-        <Suspense fallback={<LoadingFallback />}>
-          <ProductDetail
-            product={selectedProduct}
-            isOpen={isDetailOpen}
-            onClose={() => setIsDetailOpen(false)}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </Suspense>
+        <ProductDetail
+          product={selectedProduct}
+          isOpen={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       )}
 
       {isFormOpen && (
-        <Suspense fallback={<LoadingFallback />}>
-          <ProductForm
-            product={editingProduct}
-            isOpen={isFormOpen}
-            onClose={handleCloseForm}
-            onSave={handleSaveProduct}
-            mode={formMode}
-          />
-        </Suspense>
+        <ProductForm
+          product={editingProduct}
+          isOpen={isFormOpen}
+          onClose={handleCloseForm}
+          onSave={handleSaveProduct}
+          mode={formMode}
+        />
       )}
 
       {isDeleteModalOpen && selectedProduct && (
-        <Suspense fallback={<LoadingFallback />}>
-          <DeleteModal
-            product={selectedProduct}
-            isOpen={isDeleteModalOpen}
-            onClose={handleCloseDeleteModal}
-            onConfirm={handleConfirmDelete}
-          />
-        </Suspense>
+        <DeleteModal
+          product={selectedProduct}
+          isOpen={isDeleteModalOpen}
+          onClose={handleCloseDeleteModal}
+          onConfirm={handleConfirmDelete}
+        />
       )}
 
       {isDeleteMultipleModalOpen && selectedProductsData.length > 0 && (
-        <Suspense fallback={<LoadingFallback />}>
-          <DeleteMultipleModal
-            products={selectedProductsData}
-            isOpen={isDeleteMultipleModalOpen}
-            onClose={handleCloseDeleteMultipleModal}
-            onConfirm={handleConfirmDeleteMultiple}
-          />
-        </Suspense>
+        <DeleteMultipleModal
+          products={selectedProductsData}
+          isOpen={isDeleteMultipleModalOpen}
+          onClose={handleCloseDeleteMultipleModal}
+          onConfirm={handleConfirmDeleteMultiple}
+        />
       )}
     </div>
   );
 }
-

@@ -8,9 +8,9 @@ import {
   Edit,
   Trash2,
   Image as ImageIcon,
-  Loader2,
   Package,
 } from "lucide-react";
+import { LoadingSpinner } from "./LoadingSpinner";
 // const placeholderImage = "https://via.placeholder.com/150";
 
 interface ProductTableProps {
@@ -110,22 +110,22 @@ const TableComponent: React.FC<ProductTableProps> = ({
                     </div>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                    Product
+                    <span className="hidden lg:block">Product</span>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                    Category
+                    <span className="hidden lg:block">Category</span>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                    Price
+                    <span className="hidden lg:block">Price</span>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                    Stock
+                    <span className="hidden lg:block">Stock</span>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                    Discount
+                    <span className="hidden lg:block">Discount</span>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
-                    Updated
+                    <span className="hidden lg:block">Updated</span>
                   </th>
                 </tr>
               </thead>
@@ -271,14 +271,7 @@ const TableComponent: React.FC<ProductTableProps> = ({
       </div>
 
       {/* Loading indicator for infinite scroll */}
-      {isLoading && (
-        <div className="px-6 py-4 text-center">
-          <div className="inline-flex items-center px-4 py-2 text-sm text-gray-600 dark:text-slate-400">
-            <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600 dark:text-blue-400" />
-            Loading more products...
-          </div>
-        </div>
-      )}
+      {isLoading && <LoadingSpinner size="sm" className="h-24" />}
 
       {/* Empty state */}
       {products.length === 0 && !isLoading && (

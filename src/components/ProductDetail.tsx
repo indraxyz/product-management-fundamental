@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { Product } from "../types/Product";
 import placeholderImage from "../assets/placeholder-image.svg";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 interface ProductDetailProps {
   product: Product | null;
@@ -37,9 +38,10 @@ const ProductImage: React.FC<ProductImageProps> = ({ src, alt, index }) => {
   return (
     <div className="relative group">
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 dark:border-slate-600 border-t-blue-600 dark:border-t-blue-400"></div>
-        </div>
+        <LoadingSpinner
+          size="sm"
+          className="absolute inset-0 bg-gray-100 dark:bg-slate-800 rounded-lg"
+        />
       )}
       <img
         src={imageSrc}
